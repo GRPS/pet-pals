@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "petpals-be1ba": {
+      "hosting": {
+        "pet-pals": [
+          "petpals-be1ba"
+        ]
+      }
+    }
+  }
+}

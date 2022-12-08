@@ -1,0 +1,52 @@
+<form [formGroup]="form">
+
+  <app-header [title]="getLabel + ' Client'">
+    <ng-container *ngIf="!isEditMode">
+      <button type="button" class="btn btn-primary" (click)="setEditMode()">Edit</button>
+      <button type="button" class="btn btn-secondary ml-4" (click)="back()">Back</button>
+    </ng-container>
+    <ng-container *ngIf="isEditMode">
+      <button type="button" class="btn btn-success" (click)="onSubmit()">Save</button>
+      <button type="button" class="btn btn-secondary ml-4" (click)="back()">Cancel</button>
+      <button type="button" class="btn btn-danger ml-4" (click)="delete()" *ngIf="!isNew">Delete</button>
+    </ng-container>
+  </app-header>
+
+  <div class="mb-3">
+    <label class="form-label" for="customerNumber">Customer Number</label>
+    <input type="text" class="form-control" formControlName="customerNumber" id="customerNumber">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="name">Name</label>
+    <input type="text" class="form-control" formControlName="name" id="name">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="address">Address</label>
+    <input type="text" class="form-control" formControlName="address" id="address">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="petName">Pet Name</label>
+    <input type="text" class="form-control" formControlName="petName" id="petName">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="health">Health</label>
+    <textarea rows="3" class="form-control" formControlName="health" id="health"></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="feedingRoutine">Feeding Routine</label>
+    <textarea rows="3" class="form-control" formControlName="feedingRoutine" id="feedingRoutine"></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="other">Other</label>
+    <textarea rows="3" class="form-control" formControlName="other" id="other"></textarea>
+  </div>
+
+  <pre>{{ form.value | json }}</pre>
+
+</form>
