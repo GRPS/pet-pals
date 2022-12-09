@@ -12,6 +12,11 @@
 
 .pointer { cursor: pointer; }
 
+button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+}
+
 .spinner-border {
     display: inline-block;
     width: 20px;

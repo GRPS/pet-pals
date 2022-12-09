@@ -26,6 +26,10 @@ export class RecordComponent implements OnInit {
         return ( this.paramId === 'add' ? 'Add' : 'Update' ) + ' Client';
     }
 
+    get formNoValid(): boolean {
+        return this.form.invalid;
+    }
+
     constructor(
         private formBuilder: FormBuilder,
         private _clientsService: ClientsService,
@@ -137,13 +141,13 @@ export class RecordComponent implements OnInit {
     private _createForm( item: IClient = null ): void {
         this.form = this.formBuilder.group( {
             id: [ item ? item.id : '', Validators.compose( [] ) ],
-            address: [ item ? item.address : '', Validators.compose( [] ) ],
-            customerNumber: [ item ? item.customerNumber : '', Validators.compose( [] ) ],
+            address: [ item ? item.address : '', Validators.compose( [ Validators.required ] ) ],
+            customerNumber: [ item ? item.customerNumber : '', Validators.compose( [ Validators.required ] ) ],
             feedingRoutine: [ item ? item.feedingRoutine : '', Validators.compose( [] ) ],
             health: [ item ? item.health : '', Validators.compose( [] ) ],
-            name: [ item ? item.name : '', Validators.compose( [] ) ],
+            name: [ item ? item.name : '', Validators.compose( [ Validators.required ] ) ],
             other: [ item ? item.other : '', Validators.compose( [] ) ],
-            petName: [ item ? item.petName : '', Validators.compose( [] ) ]
+            petName: [ item ? item.petName : '', Validators.compose( [ Validators.required ] ) ]
         } );
     }
 
