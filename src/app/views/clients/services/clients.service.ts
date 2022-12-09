@@ -9,7 +9,7 @@ import { IClient } from '../models/entities/client';
 export class ClientsService {
 
     private _itemsCollections: AngularFirestoreCollection<IClient>;
-    items$: Observable<IClient[]>;
+    items$: Observable<IClient[]> = null;
 
     constructor(
         private store: AngularFirestore

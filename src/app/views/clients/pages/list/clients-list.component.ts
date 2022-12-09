@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { IClient } from '../../models/entities/client';
 import { ClientsService } from '../../services/clients.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,6 +19,11 @@ export class ClientsListComponent implements OnInit, OnDestroy {
     items$: Observable<IClient[]>;
 
     /**
+     * Store total client items before any filtering.
+     */
+    totalItems: number;
+
+    /**
      * Store all subscriptions.
      * @private
      */
@@ -34,19 +39,25 @@ export class ClientsListComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
 
+        // Load all client items.
         this._clientsService.loadItems();
 
+        // Apply search term to any property within the loaded client items.
         this._searchService.searchTerm$
             .pipe(
                 takeUntil( this._unsubscribeAll ),
                 tap( ( searchTerm: string ) => {
-                    console.log( 'Search: ' + searchTerm );
-                    this.items$ = this._clientsService.items$;
-                    //   .pipe(
-                    //     reduce( ( items: IClient[] ) => {
-                    //       return items.filter( ( item: IClient ) => item.address.includes( searchTerm ) );
-                    //     } )
-                    //   );
+                    this.items$ = this._clientsService.items$
+                        .pipe(
+                            map( ( items: IClient[] ) => {
+                                this.totalItems = items.length;
+                                return items.filter( ( item: IClient ) => {
+                                    return Object.keys( item ).reduce( ( acc, curr ) => {
+                                        return acc || item[ curr ].toLowerCase().includes( searchTerm );
+                                    }, false );
+                                } );
+                            } )
+                        );
                 } )
             ).subscribe();
 
