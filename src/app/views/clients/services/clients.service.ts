@@ -32,7 +32,7 @@ export class ClientsService {
                         const id = item.payload.doc.id;
                         return { ... data, id };
                     } ).sort(
-                        ( objA, objB ) => objA.customerNumber > objB.customerNumber ? 1 : -1,
+                        ( objA: IClient, objB: IClient ) => objA.customerNumber > objB.customerNumber ? 1 : -1,
                     );
                 } )
             );
