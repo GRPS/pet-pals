@@ -53,7 +53,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
                                 this.totalItems = items.length;
                                 return items.filter( ( item: IClient ) => {
                                     return Object.keys( item ).reduce( ( acc, curr ) => {
-                                        return acc || item[ curr ].toLowerCase().includes( searchTerm );
+                                        return acc || item[ curr ].toLowerCase().includes( searchTerm.toLowerCase() );
                                     }, false );
                                 } );
                             } )
