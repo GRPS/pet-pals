@@ -46,10 +46,6 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
         private _route: ActivatedRoute,
         private _router: Router,
     ) {
-        // Load items if service doesn't already have then loaded.
-        if ( this._clientsService.items$ === null ) {
-            this._clientsService.loadItems();
-        }
     }
 
     ngOnInit(): void {
