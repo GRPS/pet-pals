@@ -4,8 +4,12 @@
         <button type="button" class="btn btn-primary" routerLink="/clients/add">Add</button>
     </app-header>
 
-    <div class="table-responsive mt-3">
-        <table class="table table-bordered table-hover table-sm">
+    <div class="top-scroller mt-1" (scroll)="moveTableScrollBar()">
+        <div [style.width]="tableWidth+'px'"></div>
+    </div>
+
+    <div class="table-responsive" [ngStyle]="{'overflow-x':'auto'}" (scroll)="moveTopScrollBar()">
+        <table class="table table-bordered table-hover table-sm mb-0" #tableElement>
             <thead>
             <tr>
                 <th width="200px">Customer Number</th>
@@ -28,5 +32,5 @@
 </ng-container>
 
 <ng-template #loading>
-    <h5>Loading...</h5>
+    <div class="spinner-border text-green" role="status"></div>
 </ng-template>

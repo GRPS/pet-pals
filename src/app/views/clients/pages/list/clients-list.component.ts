@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { IClient } from '../../models/entities/client';
 import { ClientsService } from '../../services/clients.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SearchService } from '../../../../shared/service/search.service';
-import { filter, map, reduce, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { map, takeUntil, tap } from 'rxjs/operators';
 
 @Component( {
     selector: 'app-clients-list',
@@ -29,11 +29,22 @@ export class ClientsListComponent implements OnInit, OnDestroy {
      */
     private _unsubscribeAll = new Subject();
 
+    /**
+     * Hanlde on table element.
+     */
+    @ViewChild( 'tableElement', { static: false } ) tableRef: ElementRef;
+
+    /**
+     * Defines table width with model loaded.
+     */
+    tableWidth: number = 0;
+
     constructor(
         private _clientsService: ClientsService,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _searchService: SearchService
+        private _searchService: SearchService,
+        private element: ElementRef,
     ) {
     }
 
@@ -56,6 +67,12 @@ export class ClientsListComponent implements OnInit, OnDestroy {
                                         return acc || item[ curr ].toLowerCase().includes( searchTerm.toLowerCase() );
                                     }, false );
                                 } );
+                            } ),
+                            tap( () => {
+                                // Tiny delay so table is rendered before we run.
+                                setTimeout( () => {
+                                    this.calculateTableWidth();
+                                }, 0 );
                             } )
                         );
                 } )
@@ -84,6 +101,45 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             } )
             .catch( error => {
             } );
+    }
+
+
+    /**
+     * Calculates the table width.
+     */
+    private calculateTableWidth(): void {
+        if ( this.tableRef ) {
+            this.tableWidth = this.tableRef.nativeElement.clientWidth;
+        }
+        return;
+    }
+
+    /**
+     * When the top scroll bar is moved we need to scroll the table.
+     */
+    moveTableScrollBar(): void {
+        this.getTableScrollBar().scrollLeft = this.getTopScrollBar().scrollLeft;
+    }
+
+    /**
+     * When the table is scrolled we need to scroll the top scroll bar.
+     */
+    moveTopScrollBar(): void {
+        this.getTopScrollBar().scrollLeft = this.getTableScrollBar().scrollLeft;
+    }
+
+    /**
+     * Get handle to the top scroll bar.
+     */
+    private getTopScrollBar(): Element {
+        return this.element.nativeElement.querySelector( '.top-scroller' );
+    }
+
+    /**
+     * Get the table scroll bar.
+     */
+    private getTableScrollBar(): Element {
+        return this.element.nativeElement.querySelector( '.top-scroller + div' );
     }
 
 }

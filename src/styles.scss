@@ -6,3 +6,17 @@
 .ml-4 { margin-left: 1rem; }
 
 .pointer { cursor: pointer; }
+
+.spinner-border {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: text-bottom;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+}
+.text-green {
+    color: #68B34D;
+}
