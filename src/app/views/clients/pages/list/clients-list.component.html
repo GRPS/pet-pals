@@ -4,12 +4,8 @@
         <button type="button" class="btn btn-primary" routerLink="/clients/add">Add</button>
     </app-header>
 
-    <div class="top-scroller mt-1" (scroll)="moveTableScrollBar()">
-        <div [style.width]="tableWidth+'px'"></div>
-    </div>
-
-    <div class="table-responsive" [ngStyle]="{'overflow-x':'auto'}" (scroll)="moveTopScrollBar()">
-        <table class="table table-bordered table-hover table-sm mb-0" #tableElement>
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered table-hover table-sm">
             <thead>
             <tr>
                 <th width="200px">Customer Number</th>

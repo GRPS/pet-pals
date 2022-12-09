@@ -67,12 +67,6 @@ export class ClientsListComponent implements OnInit, OnDestroy {
                                         return acc || item[ curr ].toLowerCase().includes( searchTerm.toLowerCase() );
                                     }, false );
                                 } );
-                            } ),
-                            tap( () => {
-                                // Tiny delay so table is rendered before we run.
-                                setTimeout( () => {
-                                    this.calculateTableWidth();
-                                }, 0 );
                             } )
                         );
                 } )
@@ -101,45 +95,6 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             } )
             .catch( error => {
             } );
-    }
-
-
-    /**
-     * Calculates the table width.
-     */
-    private calculateTableWidth(): void {
-        if ( this.tableRef ) {
-            this.tableWidth = this.tableRef.nativeElement.clientWidth;
-        }
-        return;
-    }
-
-    /**
-     * When the top scroll bar is moved we need to scroll the table.
-     */
-    moveTableScrollBar(): void {
-        this.getTableScrollBar().scrollLeft = this.getTopScrollBar().scrollLeft;
-    }
-
-    /**
-     * When the table is scrolled we need to scroll the top scroll bar.
-     */
-    moveTopScrollBar(): void {
-        this.getTopScrollBar().scrollLeft = this.getTableScrollBar().scrollLeft;
-    }
-
-    /**
-     * Get handle to the top scroll bar.
-     */
-    private getTopScrollBar(): Element {
-        return this.element.nativeElement.querySelector( '.top-scroller' );
-    }
-
-    /**
-     * Get the table scroll bar.
-     */
-    private getTableScrollBar(): Element {
-        return this.element.nativeElement.querySelector( '.top-scroller + div' );
     }
 
 }
