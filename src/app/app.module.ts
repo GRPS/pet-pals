@@ -12,23 +12,24 @@ import { LayoutComponent } from './shared/layout/layout.component';
 import { AlertService } from './shared/service/alert.service';
 import { FormsModule } from '@angular/forms';
 
-@NgModule({
-  declarations: [
-    AppComponent,
+@NgModule( {
+    declarations: [
+        AppComponent,
 
-    TopMenuComponent,
-    LayoutComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    AngularFireModule.initializeApp( environment.firebase, 'petpals' ),
-    AngularFirestoreModule,
-  ],
-  providers: [
-    AlertService
-  ],
-  bootstrap: [AppComponent]
-})
-export class AppModule { }
+        TopMenuComponent,
+        LayoutComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        AngularFireModule.initializeApp( environment.firebase, 'petpals' ),
+        AngularFirestoreModule,
+    ],
+    providers: [
+        AlertService
+    ],
+    bootstrap: [ AppComponent ]
+} )
+export class AppModule {
+}

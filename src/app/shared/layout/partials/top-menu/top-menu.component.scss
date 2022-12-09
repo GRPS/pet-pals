@@ -1,19 +1,20 @@
 nav {
 
-  &:not(.top-nav-collapse) {
-    background: transparent;
-  }
-
-  .nav-item {
-    display: block;
-    color: white;
-
-    &:hover {
-      background-color: #2e2c2c;
-      color: black;
+    &:not(.top-nav-collapse) {
+        background: transparent;
     }
-    a.active {
-      background-color: #454545;
+
+    .nav-item {
+        display: block;
+        color: white;
+
+        &:hover {
+            background-color: #2e2c2c;
+            color: black;
+        }
+
+        a.active {
+            background-color: #454545;
+        }
     }
-  }
 }

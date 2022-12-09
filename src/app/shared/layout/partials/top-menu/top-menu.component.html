@@ -1,13 +1,15 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <img src="/assets/images/pet-pal-logo.png" alt="petpals logo" height="50" class="d-inline-block align-text-top">
-    </a>
-    <form class="d-flex">
-      <div class="input-group">
-        <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}">
-        <span class="input-group-text pointer" (click)="go()">Go</span>
-      </div>
-    </form>
-  </div>
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="/assets/images/pet-pal-logo.png" alt="petpals logo" height="50"
+                 class="d-inline-block align-text-top">
+        </a>
+        <form class="d-flex">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchTerm"
+                       [ngModelOptions]="{standalone: true}">
+                <span class="input-group-text pointer" (click)="go()">Go</span>
+            </div>
+        </form>
+    </div>
 </nav>

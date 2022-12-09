@@ -1,4 +1,4 @@
 export enum CollectionEnum {
-  CLIENTS = 'clients',
-  VISITS = 'visits'
+    CLIENTS = 'clients',
+    VISITS = 'visits'
 }
