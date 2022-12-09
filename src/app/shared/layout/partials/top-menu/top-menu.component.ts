@@ -16,8 +16,12 @@ export class TopMenuComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    go(): void {
+    startSearching(): void {
         this._searchService.setSearchTerm( this.searchTerm );
+    }
+
+    resetSearch(): void {
+        this.startSearching();
     }
 
 }

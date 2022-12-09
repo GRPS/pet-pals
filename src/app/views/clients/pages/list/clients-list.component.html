@@ -1,6 +1,6 @@
 <ng-container *ngIf="items$ | async as items else loading">
 
-    <app-header title="Clients" [subTitle]="'(' + items.length + '/' + totalItems + ')'">
+    <app-header title="Clients" [subTitle]="'(Showing: ' + items.length + '/' + totalItems + ')'">
         <button type="button" class="btn btn-primary" routerLink="/clients/add">Add</button>
     </app-header>
 

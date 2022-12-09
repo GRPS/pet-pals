@@ -6,9 +6,15 @@
         </a>
         <form class="d-flex">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchTerm"
-                       [ngModelOptions]="{standalone: true}">
-                <span class="input-group-text pointer" (click)="go()">Go</span>
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input
+                        type="search"
+                        class="form-control"
+                        placeholder="Search..."
+                        [(ngModel)]="searchTerm"
+                        [ngModelOptions]="{standalone: true}"
+                        (keyup)="startSearching()"
+                        (search)="resetSearch()">
             </div>
         </form>
     </div>
