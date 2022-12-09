@@ -90,6 +90,9 @@ export class ClientsService {
     }
 
     getItemById( id: string ): Observable<IClient> {
+        if ( this._itemsCollections === undefined ) {
+            this._itemsCollections = this.store.collection<IClient>( CollectionEnum.CLIENTS );
+        }
         return this._itemsCollections.snapshotChanges()
             .pipe(
                 map( changes => changes.map( ( { payload: { doc } } ) => {
