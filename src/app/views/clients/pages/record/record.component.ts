@@ -1,22 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClientsService } from '../../services/clients.service';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { IClient } from '../../models/entities/client';
-import { take, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { ActivatedRoute, NavigationExtras, ParamMap, Router } from '@angular/router';
+import { Observable, of, Subscription } from 'rxjs';
+import { CanComponentDeactivate } from '../../../../shared/directives/can-deactivate-guard.service';
 
 @Component( {
     selector: 'app-record',
     templateUrl: './record.component.html',
     styleUrls: [ './record.component.scss' ]
 } )
-export class RecordComponent implements OnInit {
+export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
     form: FormGroup;
     paramId: string;
     isNew: boolean = false;
     isEditMode: boolean = false;
+    subscription: Subscription;
 
     /**
      * Get title of this component.
@@ -37,7 +40,10 @@ export class RecordComponent implements OnInit {
         private _route: ActivatedRoute,
         private _router: Router,
     ) {
-        this._createForm( this._router.getCurrentNavigation().extras.state as IClient );
+        // Load items if service doesn't already have then loaded.
+        if( this._clientsService.items$ === null ) {
+            this._clientsService.loadItems();
+        }
     }
 
     ngOnInit(): void {
@@ -49,13 +55,30 @@ export class RecordComponent implements OnInit {
                     this.paramId = params.get( 'id' );
                     this.isNew = this.paramId === 'add';
                     if ( this.isNew ) {
+                        this._createForm( null );
                         this.setEditMode();
                     } else {
-                        this.setReadMode();
+                        this.subscription = this._clientsService.items$
+                            .pipe(
+                                tap( ( items: IClient[] ) => {
+                                    let item: IClient = null;
+                                    if ( items ) {
+                                        item = items.find( ( item: IClient ) => item.id === this.paramId );
+                                    }
+                                    this._createForm( item );
+                                    this.setReadMode();
+                                } )
+                            ).subscribe();
                     }
                 } )
             ).subscribe();
 
+    }
+
+    ngOnDestroy(): void {
+        if ( this.subscription ) {
+            this.subscription.unsubscribe();
+        }
     }
 
     /**
@@ -149,6 +172,16 @@ export class RecordComponent implements OnInit {
             other: [ item ? item.other : '', Validators.compose( [] ) ],
             petName: [ item ? item.petName : '', Validators.compose( [ Validators.required ] ) ]
         } );
+    }
+
+    canDeactivate(): Observable<boolean> | boolean {
+        // if ( this.form.dirty ) {
+        //     this._alertService.areYouSure( 'Are you sure?', 'Changes will be lost!')
+        //         .then( ( confirmed: boolean ) => {
+        //           return of( confirmed );
+        //         } );
+        // }
+        return true;
     }
 
 }

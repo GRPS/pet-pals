@@ -1,4 +1,4 @@
-<form [formGroup]="form">
+<form [formGroup]="form" *ngIf="form">
 
     <app-header [title]="getTitle">
         <ng-container *ngIf="!isEditMode">

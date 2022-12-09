@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { from, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IClient } from '../models/entities/client';
 
@@ -85,6 +85,11 @@ export class ClientsService {
                 return false;
             } )
         );
+    }
+
+    getItemById( id: string, items: IClient[] ): IClient {
+        console.log( 'Get item!', id );
+        return items.find( ( item: IClient ) => item.id === id );
     }
 
 }

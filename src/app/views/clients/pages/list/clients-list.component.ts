@@ -90,7 +90,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
      * @return void
      */
     open( item: IClient, event: MouseEvent ): void {
-        this._router.navigate( [ '../' + item.id ], { state: item, relativeTo: this._route } )
+        this._router.navigate( [ '../' + item.id ], { relativeTo: this._route } )
             .then( ( succeeded: boolean ) => {
             } )
             .catch( error => {

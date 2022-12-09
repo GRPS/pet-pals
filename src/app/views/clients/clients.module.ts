@@ -6,6 +6,7 @@ import { ClientsListComponent } from './pages/list/clients-list.component';
 import { ClientsService } from './services/clients.service';
 import { RecordComponent } from './pages/record/record.component';
 import { HeaderComponent } from '../../shared/layout/partials/header/header.component';
+import { CanDeactivateGuard } from '../../shared/directives/can-deactivate-guard.service';
 
 @NgModule( {
     declarations: [
@@ -28,10 +29,12 @@ import { HeaderComponent } from '../../shared/layout/partials/header/header.comp
             },
             {
                 path: ':id',
+                canDeactivate: [ CanDeactivateGuard ],
                 component: RecordComponent
             },
             {
                 path: 'add',
+                canDeactivate: [ CanDeactivateGuard ],
                 component: RecordComponent
             }
         ] ),
