@@ -4,6 +4,8 @@ import { from, Observable, of } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IClient } from '../models/entities/client';
+import firebase from 'firebase';
+import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 
 @Injectable()
 export class ClientsService {
@@ -87,9 +89,15 @@ export class ClientsService {
         );
     }
 
-    getItemById( id: string, items: IClient[] ): IClient {
-        console.log( 'Get item!', id );
-        return items.find( ( item: IClient ) => item.id === id );
+    getItemById( id: string ): Observable<IClient> {
+        return this._itemsCollections.snapshotChanges()
+            .pipe(
+                map( changes => changes.map( ( { payload: { doc } } ) => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    return { id, ... data };
+                } ) ),
+                map( ( items: IClient[] ) => items.find( item => item.id === id ) ) );
     }
 
 }

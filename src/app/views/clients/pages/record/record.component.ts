@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClientsService } from '../../services/clients.service';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { IClient } from '../../models/entities/client';
-import { map, take, tap } from 'rxjs/operators';
+import { map, take, takeUntil, tap } from 'rxjs/operators';
 import { ActivatedRoute, NavigationExtras, ParamMap, Router } from '@angular/router';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, of, Subject, Subscription } from 'rxjs';
 import { CanComponentDeactivate } from '../../../../shared/directives/can-deactivate-guard.service';
 
 @Component( {
@@ -20,6 +20,12 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
     isNew: boolean = false;
     isEditMode: boolean = false;
     subscription: Subscription;
+
+    /**
+     * Store all subscriptions.
+     * @private
+     */
+    private _unsubscribeAll = new Subject();
 
     /**
      * Get title of this component.
@@ -41,7 +47,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
         private _router: Router,
     ) {
         // Load items if service doesn't already have then loaded.
-        if( this._clientsService.items$ === null ) {
+        if ( this._clientsService.items$ === null ) {
             this._clientsService.loadItems();
         }
     }
@@ -58,13 +64,10 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                         this._createForm( null );
                         this.setEditMode();
                     } else {
-                        this.subscription = this._clientsService.items$
+                        this._clientsService.getItemById( this.paramId )
                             .pipe(
-                                tap( ( items: IClient[] ) => {
-                                    let item: IClient = null;
-                                    if ( items ) {
-                                        item = items.find( ( item: IClient ) => item.id === this.paramId );
-                                    }
+                                takeUntil( this._unsubscribeAll ),
+                                tap( ( item: IClient ) => {
                                     this._createForm( item );
                                     this.setReadMode();
                                 } )
@@ -75,10 +78,12 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
 
     }
 
+    /**
+     * Destroy all subscriptions.
+     * @return void
+     */
     ngOnDestroy(): void {
-        if ( this.subscription ) {
-            this.subscription.unsubscribe();
-        }
+        this._unsubscribeAll.next();
     }
 
     /**
