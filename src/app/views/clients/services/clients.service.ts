@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { Observable, of } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IClient } from '../models/entities/client';
@@ -9,16 +9,20 @@ import { IClient } from '../models/entities/client';
 export class ClientsService {
 
     private _itemsCollections: AngularFirestoreCollection<IClient>;
-    private _items$: Observable<IClient[]>;
+    items$: Observable<IClient[]>;
 
     constructor(
         private store: AngularFirestore
     ) {
     }
 
+    /**
+     * Load all items from Firebase.
+     * @return void.
+     */
     loadItems(): void {
         this._itemsCollections = this.store.collection<IClient>( CollectionEnum.CLIENTS );
-        this._items$ = this._itemsCollections.snapshotChanges()
+        this.items$ = this._itemsCollections.snapshotChanges()
             .pipe(
                 map( items => {
                     return items.map( item => {
@@ -32,26 +36,55 @@ export class ClientsService {
             );
     }
 
-    getItems(): Observable<IClient[]> {
-        return this._items$;
-    }
-
+    /**
+     * Add a client item to Firebase.
+     * @param item IClient
+     * @return result of adding an item observable boolean
+     */
     addItem( item: IClient ): Observable<boolean> {
         console.log( 'New item!', item );
-        this._itemsCollections.add( item );
-        return of( true );
+        return from( this._itemsCollections.add( item )
+            .then( function( success ) {
+                return true;
+            } )
+            .catch( function( error ) {
+                return false;
+            } )
+        );
     }
 
+    /**
+     * Update an existing client item in Firebase.
+     * @param item IClient
+     * @return result of updating or adding an item observable boolean
+     */
     updateItem( item: IClient ): Observable<boolean> {
         console.log( 'Update item!', item );
-        this._itemsCollections.doc( item.id ).update( item );
-        return of( true );
+        return from( this._itemsCollections.doc( item.id ).update( item )
+            .then( function( success ) {
+                return true;
+            } )
+            .catch( function( error ) {
+                return false;
+            } )
+        );
     }
 
+    /**
+     * Delete client item from Firebase.
+     * @param item IClient
+     * @return result of deleting an item observable boolean
+     */
     deleteItem( item: IClient ): Observable<boolean> {
         console.log( 'Delete item!', item );
-        this._itemsCollections.doc( item.id ).delete();
-        return of( true );
+        return from( this._itemsCollections.doc( item.id ).delete()
+            .then( function( success ) {
+                return true;
+            } )
+            .catch( function( error ) {
+                return false;
+            } )
+        );
     }
 
 }

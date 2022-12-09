@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClientsService } from '../../services/clients.service';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { IClient } from '../../models/entities/client';
@@ -18,8 +18,12 @@ export class RecordComponent implements OnInit {
     isNew: boolean = false;
     isEditMode: boolean = false;
 
-    get getLabel(): string {
-        return this.paramId === 'add' ? 'Add' : 'Update';
+    /**
+     * Get title of this component.
+     * @return title string
+     */
+    get getTitle(): string {
+        return ( this.paramId === 'add' ? 'Add' : 'Update' ) + ' Client';
     }
 
     constructor(
@@ -50,16 +54,28 @@ export class RecordComponent implements OnInit {
 
     }
 
+    /**
+     * Put the form in edit mode.
+     * @return void
+     */
     setEditMode(): void {
         this.isEditMode = true;
         this.form.enable();
     }
 
+    /**
+     * Put the form in read mode.
+     * @return void
+     */
     setReadMode(): void {
         this.isEditMode = false;
         this.form.disable();
     }
 
+    /**
+     * Save changes to existing client OR create a new client.
+     * @return void
+     */
     onSubmit(): void {
         const item: IClient = this.form.value;
         if ( this.form.valid ) {
@@ -80,6 +96,10 @@ export class RecordComponent implements OnInit {
         }
     }
 
+    /**
+     * Delete a client.
+     * @return void
+     */
     delete(): void {
         this._alertService.areYouSure()
             .then( ( response: boolean ) => {
@@ -96,20 +116,34 @@ export class RecordComponent implements OnInit {
             } );
     }
 
+    /**
+     * Go back to client list.
+     * @return void
+     */
     back(): void {
-        this._router.navigate( [ '../list' ], { relativeTo: this._route } );
+        this._router.navigate( [ '../list' ], { relativeTo: this._route } )
+            .then( ( succeeded: boolean ) => {
+            } )
+            .catch( error => {
+            } );
     }
 
-    private _createForm( item: IClient = null ) {
+    /**
+     * Define the client form with defaults or real values.
+     * @param item
+     * @return void
+     * @private
+     */
+    private _createForm( item: IClient = null ): void {
         this.form = this.formBuilder.group( {
-            id: [ item ? item.id : '' ],
-            address: [ item ? item.address : '' ],
-            customerNumber: [ item ? item.customerNumber : '' ],
-            feedingRoutine: [ item ? item.feedingRoutine : '' ],
-            health: [ item ? item.health : '' ],
-            name: [ item ? item.name : '' ],
-            other: [ item ? item.other : '' ],
-            petName: [ item ? item.petName : '' ]
+            id: [ item ? item.id : '', Validators.compose( [] ) ],
+            address: [ item ? item.address : '', Validators.compose( [] ) ],
+            customerNumber: [ item ? item.customerNumber : '', Validators.compose( [] ) ],
+            feedingRoutine: [ item ? item.feedingRoutine : '', Validators.compose( [] ) ],
+            health: [ item ? item.health : '', Validators.compose( [] ) ],
+            name: [ item ? item.name : '', Validators.compose( [] ) ],
+            other: [ item ? item.other : '', Validators.compose( [] ) ],
+            petName: [ item ? item.petName : '', Validators.compose( [] ) ]
         } );
     }
 

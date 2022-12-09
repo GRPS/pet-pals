@@ -1,6 +1,6 @@
 <form [formGroup]="form">
 
-    <app-header [title]="getLabel + ' Client'">
+    <app-header [title]="getTitle">
         <ng-container *ngIf="!isEditMode">
             <button type="button" class="btn btn-primary" (click)="setEditMode()">Edit</button>
             <button type="button" class="btn btn-secondary ml-4" (click)="back()">Back</button>

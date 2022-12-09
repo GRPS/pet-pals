@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PetPalsService } from '../../../service/petpals.service';
+import { SearchService } from '../../../service/search.service';
 
 @Component( {
     selector: 'app-top-menu',
@@ -10,14 +10,14 @@ export class TopMenuComponent implements OnInit {
 
     searchTerm: string;
 
-    constructor( private _petPalsService: PetPalsService ) {
+    constructor( private _searchService: SearchService ) {
     }
 
     ngOnInit(): void {
     }
 
     go(): void {
-        this._petPalsService.setSearchTerm( this.searchTerm );
+        this._searchService.setSearchTerm( this.searchTerm );
     }
 
 }

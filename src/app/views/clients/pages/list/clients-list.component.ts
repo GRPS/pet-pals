@@ -3,7 +3,7 @@ import { Observable, Subject } from 'rxjs';
 import { IClient } from '../../models/entities/client';
 import { ClientsService } from '../../services/clients.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PetPalsService } from '../../../../shared/service/petpals.service';
+import { SearchService } from '../../../../shared/service/search.service';
 import { filter, map, reduce, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 @Component( {
@@ -13,16 +13,22 @@ import { filter, map, reduce, switchMap, takeUntil, tap } from 'rxjs/operators';
 } )
 export class ClientsListComponent implements OnInit, OnDestroy {
 
+    /**
+     * Store items to show in the list.
+     */
     items$: Observable<IClient[]>;
 
-    // tslint:disable-next-line:variable-name
+    /**
+     * Store all subscriptions.
+     * @private
+     */
     private _unsubscribeAll = new Subject();
 
     constructor(
         private _clientsService: ClientsService,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _petPalsService: PetPalsService
+        private _searchService: SearchService
     ) {
     }
 
@@ -30,12 +36,12 @@ export class ClientsListComponent implements OnInit, OnDestroy {
 
         this._clientsService.loadItems();
 
-        this._petPalsService.searchTerm$
+        this._searchService.searchTerm$
             .pipe(
                 takeUntil( this._unsubscribeAll ),
                 tap( ( searchTerm: string ) => {
                     console.log( 'Search: ' + searchTerm );
-                    this.items$ = this._clientsService.getItems();
+                    this.items$ = this._clientsService.items$;
                     //   .pipe(
                     //     reduce( ( items: IClient[] ) => {
                     //       return items.filter( ( item: IClient ) => item.address.includes( searchTerm ) );
@@ -46,13 +52,27 @@ export class ClientsListComponent implements OnInit, OnDestroy {
 
     }
 
+    /**
+     * Destroy all subscriptions.
+     * @return void
+     */
     ngOnDestroy(): void {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
     }
 
-    open( item, event: MouseEvent ): void {
-        this._router.navigate( [ '../' + item.id ], { state: item, relativeTo: this._route } );
+    /**
+     * Open a client record.
+     * @param item IClient
+     * @param event MouseEvent
+     * @return void
+     */
+    open( item: IClient, event: MouseEvent ): void {
+        this._router.navigate( [ '../' + item.id ], { state: item, relativeTo: this._route } )
+            .then( ( succeeded: boolean ) => {
+            } )
+            .catch( error => {
+            } );
     }
 
 }
