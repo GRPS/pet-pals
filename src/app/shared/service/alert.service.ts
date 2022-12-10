@@ -42,12 +42,16 @@ export class AlertService {
      */
     toast( title: string = 'Success', icon: SweetAlertIcon = 'success', timer: number = 2000 ): void {
         Swal.fire( {
+            customClass: {
+                popup: 'colored-toast'
+            },
+            toast: true,
             icon,
             title,
             showConfirmButton: false,
             timer,
-            toast: true,
-            position: 'center'
+            timerProgressBar: true,
+            position: 'bottom'
         } );
     }
 

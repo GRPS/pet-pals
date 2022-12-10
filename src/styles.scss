@@ -1,16 +1,76 @@
 /* You can add global styles to this file, and also import other style files */
 
-.mt-2 { margin-top: 0.5rem; }
-.mr-2 { margin-right: 0.5rem; }
-.mb-2 { margin-bottom: 0.5rem; }
-.ml-2 { margin-left: 0.5rem; }
+// SweetAlert colours.
+.colored-toast.swal2-icon-success {
+    background-color: #e0f6d5 !important;
+}
 
-.mt-4 { margin-top: 1rem; }
-.mr-4 { margin-right: 1rem; }
-.mb-4 { margin-bottom: 1rem; }
-.ml-4 { margin-left: 1rem; }
+.colored-toast.swal2-icon-error {
+    background-color: #f6d5d5 !important;
+}
 
-.pointer { cursor: pointer; }
+.colored-toast.swal2-icon-warning {
+    background-color: #f6e4d5 !important;
+}
+
+.colored-toast.swal2-icon-info {
+    background-color: #d5edf6 !important;
+}
+
+.colored-toast.swal2-icon-question {
+    background-color: #d6d5f6 !important;
+}
+
+.colored-toast .swal2-title {
+    color: #333131;
+}
+
+.colored-toast .swal2-close {
+    color: white;
+}
+
+.colored-toast .swal2-html-container {
+    color: white;
+}
+
+// End of SweetAlert colours.
+
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.mr-2 {
+    margin-right: 0.5rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.ml-2 {
+    margin-left: 0.5rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mr-4 {
+    margin-right: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.ml-4 {
+    margin-left: 1rem;
+}
+
+.pointer {
+    cursor: pointer;
+}
 
 button:disabled {
     cursor: not-allowed;
@@ -27,6 +87,7 @@ button:disabled {
     border-radius: 50%;
     animation: spinner-border .75s linear infinite;
 }
+
 .text-green {
     color: #68B34D;
 }

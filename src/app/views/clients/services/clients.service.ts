@@ -45,8 +45,8 @@ export class ClientsService {
      */
     addItem( item: IClient ): Observable<boolean> {
         this._setItemCollection();
-        const id: string = this.store.createId();
-        return from( this._itemsCollections.doc( id ).set( { ...item, id } )
+        const newId: string = this.store.createId();
+        return from( this._itemsCollections.doc( newId ).set( { ...item, id: newId } )
             .then( function( success ) {
                 return true;
             } )
