@@ -30,9 +30,7 @@ export class ClientsService {
                         const data = item.payload.doc.data() as IClient;
                         const id = item.payload.doc.id;
                         return { ... data, id };
-                    } ).sort(
-                        ( objA: IClient, objB: IClient ) => objA.customerNumber > objB.customerNumber ? 1 : -1,
-                    );
+                    } );
                 } )
             );
     }
@@ -108,7 +106,7 @@ export class ClientsService {
      */
     private _setItemCollection(): void {
         if ( this._itemsCollections === undefined ) {
-            this._itemsCollections = this.store.collection<IClient>( CollectionEnum.CLIENTS );
+            this._itemsCollections = this.store.collection<IClient>( CollectionEnum.CLIENTS, ref => ref.orderBy('customerNumber', 'asc') );
         }
     }
 
