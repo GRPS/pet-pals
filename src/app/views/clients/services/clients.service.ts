@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, CollectionReference, DocumentSnapshot } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IClient } from '../models/entities/client';
-import firebase from 'firebase';
 
 @Injectable()
 export class ClientsService {
@@ -22,7 +21,7 @@ export class ClientsService {
      * @return void.
      */
     loadItems(): void {
-        this.items$ = this.store.collection<IClient>( CollectionEnum.CLIENTS, ref => ref.orderBy('customerNumber', 'asc') ).snapshotChanges()
+        this.items$ = this.store.collection<IClient>( CollectionEnum.CLIENTS, ref => ref.orderBy( 'customerNumber', 'asc' ) ).snapshotChanges()
             .pipe(
                 map( items => {
                     return items.map( item => {
@@ -41,7 +40,7 @@ export class ClientsService {
      */
     addItem( item: IClient ): Observable<boolean> {
         const newId: string = this.store.createId();
-        return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( newId ).set( { ...item, id: newId } )
+        return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( newId ).set( { ... item, id: newId } )
             .then( function( success ) {
                 return true;
             } )
@@ -89,7 +88,7 @@ export class ClientsService {
      * @return Observable<IClient>
      */
     getItemById( id: string ): Observable<IClient> {
-        return this.store.collection<IClient>( CollectionEnum.CLIENTS).doc(id).valueChanges();
+        return this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( id ).valueChanges();
     }
 
 }
