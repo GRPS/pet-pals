@@ -54,15 +54,6 @@ export class ClientsService {
                 return false;
             } )
         );
-
-        // return from( this._itemsCollections.add( { ...item, id } )
-        //     .then( function( success ) {
-        //         return true;
-        //     } )
-        //     .catch( function( error ) {
-        //         return false;
-        //     } )
-        // );
     }
 
     /**
