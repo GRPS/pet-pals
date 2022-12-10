@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { from, Observable, of } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IClient } from '../models/entities/client';
 import firebase from 'firebase';
-import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 
 @Injectable()
 export class ClientsService {
