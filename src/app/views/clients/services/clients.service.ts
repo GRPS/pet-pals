@@ -41,8 +41,7 @@ export class ClientsService {
      */
     addItem( item: IClient ): Observable<boolean> {
         const newId: string = this.store.createId();
-        const collection = this.store.collection<IClient>( CollectionEnum.CLIENTS );
-        return from( collection.doc( newId ).set( { ...item, id: newId } )
+        return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( newId ).set( { ...item, id: newId } )
             .then( function( success ) {
                 return true;
             } )
@@ -84,6 +83,11 @@ export class ClientsService {
         );
     }
 
+    /**
+     * Get a document by its id.
+     * @param id string
+     * @return Observable<IClient>
+     */
     getItemById( id: string ): Observable<IClient> {
         return this.store.collection<IClient>( CollectionEnum.CLIENTS).doc(id).valueChanges();
     }
