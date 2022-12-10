@@ -23,7 +23,7 @@ export class ClientsService {
      * @return void.
      */
     loadItems(): void {
-        this._itemsCollections = this.store.collection<IClient>( CollectionEnum.CLIENTS );
+        this._setItemCollection();
         this.items$ = this._itemsCollections.snapshotChanges()
             .pipe(
                 map( items => {
@@ -44,8 +44,9 @@ export class ClientsService {
      * @return result of adding an item observable boolean
      */
     addItem( item: IClient ): Observable<boolean> {
-        console.log( 'New item!', item );
-        return from( this._itemsCollections.add( item )
+        this._setItemCollection();
+        const id: string = this.store.createId();
+        return from( this._itemsCollections.doc( id ).set( { ...item, id } )
             .then( function( success ) {
                 return true;
             } )
@@ -53,6 +54,15 @@ export class ClientsService {
                 return false;
             } )
         );
+
+        // return from( this._itemsCollections.add( { ...item, id } )
+        //     .then( function( success ) {
+        //         return true;
+        //     } )
+        //     .catch( function( error ) {
+        //         return false;
+        //     } )
+        // );
     }
 
     /**
@@ -61,7 +71,7 @@ export class ClientsService {
      * @return result of updating or adding an item observable boolean
      */
     updateItem( item: IClient ): Observable<boolean> {
-        console.log( 'Update item!', item );
+        this._setItemCollection();
         return from( this._itemsCollections.doc( item.id ).update( item )
             .then( function( success ) {
                 return true;
@@ -78,7 +88,7 @@ export class ClientsService {
      * @return result of deleting an item observable boolean
      */
     deleteItem( item: IClient ): Observable<boolean> {
-        console.log( 'Delete item!', item );
+        this._setItemCollection();
         return from( this._itemsCollections.doc( item.id ).delete()
             .then( function( success ) {
                 return true;
@@ -90,9 +100,7 @@ export class ClientsService {
     }
 
     getItemById( id: string ): Observable<IClient> {
-        if ( this._itemsCollections === undefined ) {
-            this._itemsCollections = this.store.collection<IClient>( CollectionEnum.CLIENTS );
-        }
+        this._setItemCollection();
         return this._itemsCollections.snapshotChanges()
             .pipe(
                 map( changes => changes.map( ( { payload: { doc } } ) => {
@@ -101,6 +109,17 @@ export class ClientsService {
                     return { id, ... data };
                 } ) ),
                 map( ( items: IClient[] ) => items.find( item => item.id === id ) ) );
+    }
+
+    /**
+     * Set collection.
+     * @return void
+     * @private
+     */
+    private _setItemCollection(): void {
+        if ( this._itemsCollections === undefined ) {
+            this._itemsCollections = this.store.collection<IClient>( CollectionEnum.CLIENTS );
+        }
     }
 
 }
