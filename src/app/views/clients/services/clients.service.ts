@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, CollectionReference, DocumentSnapshot } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
@@ -22,8 +22,7 @@ export class ClientsService {
      * @return void.
      */
     loadItems(): void {
-        this._setItemCollection();
-        this.items$ = this._itemsCollections.snapshotChanges()
+        this.items$ = this.store.collection<IClient>( CollectionEnum.CLIENTS, ref => ref.orderBy('customerNumber', 'asc') ).snapshotChanges()
             .pipe(
                 map( items => {
                     return items.map( item => {
@@ -41,9 +40,9 @@ export class ClientsService {
      * @return result of adding an item observable boolean
      */
     addItem( item: IClient ): Observable<boolean> {
-        this._setItemCollection();
         const newId: string = this.store.createId();
-        return from( this._itemsCollections.doc( newId ).set( { ...item, id: newId } )
+        const collection = this.store.collection<IClient>( CollectionEnum.CLIENTS );
+        return from( collection.doc( newId ).set( { ...item, id: newId } )
             .then( function( success ) {
                 return true;
             } )
@@ -59,8 +58,7 @@ export class ClientsService {
      * @return result of updating or adding an item observable boolean
      */
     updateItem( item: IClient ): Observable<boolean> {
-        this._setItemCollection();
-        return from( this._itemsCollections.doc( item.id ).update( item )
+        return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).update( item )
             .then( function( success ) {
                 return true;
             } )
@@ -76,8 +74,7 @@ export class ClientsService {
      * @return result of deleting an item observable boolean
      */
     deleteItem( item: IClient ): Observable<boolean> {
-        this._setItemCollection();
-        return from( this._itemsCollections.doc( item.id ).delete()
+        return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
             .then( function( success ) {
                 return true;
             } )
@@ -88,26 +85,7 @@ export class ClientsService {
     }
 
     getItemById( id: string ): Observable<IClient> {
-        this._setItemCollection();
-        return this._itemsCollections.snapshotChanges()
-            .pipe(
-                map( changes => changes.map( ( { payload: { doc } } ) => {
-                    const data = doc.data();
-                    const id = doc.id;
-                    return { id, ... data };
-                } ) ),
-                map( ( items: IClient[] ) => items.find( item => item.id === id ) ) );
-    }
-
-    /**
-     * Set collection.
-     * @return void
-     * @private
-     */
-    private _setItemCollection(): void {
-        if ( this._itemsCollections === undefined ) {
-            this._itemsCollections = this.store.collection<IClient>( CollectionEnum.CLIENTS, ref => ref.orderBy('customerNumber', 'asc') );
-        }
+        return this.store.collection<IClient>( CollectionEnum.CLIENTS).doc(id).valueChanges();
     }
 
 }
