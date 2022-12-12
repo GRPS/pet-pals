@@ -41,6 +41,7 @@ export class ClientsService {
      */
     loadItems( searchTerm: string = '' ) {
         this.store.collection( CollectionEnum.CLIENTS, ref => ref
+            .where( 'petName', '==', searchTerm )
             .limit( this._maxPerPage )
             .orderBy( 'customerNumber', 'asc' )
         ).snapshotChanges()
@@ -97,7 +98,11 @@ export class ClientsService {
         return this.prev_start_at[ this.pagination_clicked_count - 1 ];
     }
 
-    nextPage() {
+    /**
+     * Pagination to the next page.
+     * @return void
+     */
+    nextPage(): void {
         this.disable_next = true;
         this.store.collection( CollectionEnum.CLIENTS, ref => ref
             .limit( this._maxPerPage )
@@ -134,7 +139,11 @@ export class ClientsService {
             ).subscribe();
     }
 
-    prevPage() {
+    /**
+     * Pagination to the previous page.
+     * @return void
+     */
+    prevPage(): void {
         this.disable_prev = true;
         this.store.collection( CollectionEnum.CLIENTS, ref => ref
             .orderBy( 'customerNumber', 'asc' )
