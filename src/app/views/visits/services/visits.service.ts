@@ -37,7 +37,7 @@ export class VisitsService {
                     }
                     this._itemsSubject.next( tableData );
                 }, error => {
-                    console.log( 'Visit loadItems error', error );
+                    console.log( 'Visit service loadItems error', error );
                 } )
             ).subscribe();
     }
@@ -51,12 +51,11 @@ export class VisitsService {
                 map( res => {
                     console.log('Deleting visits for client: ' + clientId );
                     res.forEach( doc => {
-                        console.log('Delete Doc: ' + doc.id );
-                        // doc.ref.delete();
+                        doc.ref.delete();
                     } );
                     return true ;
                 }, error => {
-                    console.log( 'Visit delete error', error );
+                    console.log( 'Visit service delete all for client error', error );
                     return false;
                 }  )
             );
@@ -74,6 +73,7 @@ export class VisitsService {
                 return true;
             } )
             .catch( function( error ) {
+                console.log( 'Visit service add item error', error );
                 return false;
             } )
         );
@@ -90,6 +90,7 @@ export class VisitsService {
                 return true;
             } )
             .catch( function( error ) {
+                console.log( 'Visit service update item error', error );
                 return false;
             } )
         );
@@ -106,6 +107,7 @@ export class VisitsService {
                 return true;
             } )
             .catch( function( error ) {
+                console.log( 'Visit service delete item error', error );
                 return false;
             } )
         );

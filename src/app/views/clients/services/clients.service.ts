@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, QuerySnapshot } from '@angular/fire/firestore';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { catchError, map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IClient } from '../models/entities/client';
 import { VisitsService } from '../../visits/services/visits.service';
@@ -184,6 +184,7 @@ export class ClientsService {
                 return true;
             } )
             .catch( function( error ) {
+                console.log( 'Client service add item error', error );
                 return false;
             } )
         );
@@ -200,6 +201,7 @@ export class ClientsService {
                 return true;
             } )
             .catch( function( error ) {
+                console.log( 'Client service update item error', error );
                 return false;
             } )
         );
@@ -216,19 +218,22 @@ export class ClientsService {
             .pipe(
                 tap( ( result: boolean ) => {
                     if ( result ) {
-                        // return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
-                        //     .then( function( success ) {
-                        //         return true;
-                        //     } )
-                        //     .catch( function( error ) {
-                        //         return false;
-                        //     } )
-                        // );
-                        console.log('done');
+                        return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
+                            .then( function( success ) {
+                                return true;
+                            } )
+                            .catch( function( error ) {
+                                return false;
+                            } )
+                        );
                     } else {
                         return false;
-                        console.log('error');
+                        console.log( 'Client service deleteItem cannot delete visits error' );
                     }
+                } ),
+                catchError( error => {
+                    console.log( 'Client service delete item error', error );
+                    return of( false );
                 } )
             );
 
