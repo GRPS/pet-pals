@@ -50,7 +50,7 @@ export class ClientsService {
      */
     loadItems( searchTerm: string ) {
         this.searchTerm = searchTerm;
-        console.log('loadItems now!!!');
+        console.log( 'loadItems now!!!' );
         this.store.collection( CollectionEnum.CLIENTS, ref => {
                 let query: Query = ref;
                 if ( searchTerm !== '' ) {
@@ -172,10 +172,10 @@ export class ClientsService {
                 if ( this.searchTerm ) {
                     query = query.where( 'petName', '==', this.searchTerm );
                 }
-                query = query.startAt( this.get_prev_startAt() );
-                query = query.endBefore( this.firstInResponse );
                 query = query.limit( this._maxPerPage );
                 query = query.orderBy( 'customerNumber', 'asc' );
+                query = query.startAt( this.get_prev_startAt() );
+                query = query.endBefore( this.firstInResponse );
                 return query;
             }
         ).get()
