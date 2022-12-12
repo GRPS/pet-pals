@@ -31,10 +31,6 @@ export class ClientsService {
     ) {
     }
 
-    setItems( items: IClient[] ): void {
-        this._itemsSubject.next( items );
-    }
-
     /**
      * Load all items from Firebase.
      * @return void.
