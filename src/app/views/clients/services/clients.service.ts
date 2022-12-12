@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, QuerySnapshot } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
-import { catchError, map, take, tap } from 'rxjs/operators';
+import { catchError, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IClient } from '../models/entities/client';
 import { VisitsService } from '../../visits/services/visits.service';
-import { IVisit } from '../../visits/models/entities/visits';
 
 @Injectable()
 export class ClientsService {
