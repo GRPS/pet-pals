@@ -29,6 +29,10 @@ export class AlertService {
             cancelButtonText: 'No',
             reverseButtons: true
         } ).then( ( result ) => {
+            if(result.value){
+                return result.isConfirmed;
+                setTimeout(function(){ Swal.close();  }, 1000);
+            }
             return result.isConfirmed;
         } );
     }

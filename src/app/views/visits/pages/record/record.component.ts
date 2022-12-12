@@ -1,29 +1,26 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ClientsService } from '../../services/clients.service';
 import { AlertService } from '../../../../shared/service/alert.service';
-import { IClient } from '../../models/entities/client';
 import { take, takeUntil, tap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { CanComponentDeactivate } from '../../../../shared/directives/can-deactivate-guard.service';
-import { CLIENTS } from '../../enums/clients.enum';
-import { VisitsService } from '../../../visits/services/visits.service';
-import { IVisit } from '../../../visits/models/entities/visits';
+import { IVisit } from '../../models/entities/visits';
+import { VisitsService } from '../../services/visits.service';
+import { VISITS } from '../../enums/visits.enum';
 
 @Component( {
     selector: 'app-record',
     templateUrl: './record.component.html',
-    styleUrls: [ './record.component.scss' ],
-    providers: [ VisitsService ]
+    styleUrls: [ './record.component.scss' ]
 } )
 export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
     form: FormGroup;
     paramId: string;
+    paramClientId: string;
     isNew: boolean = false;
     isEditMode: boolean = false;
-    subscription: Subscription;
 
     /**
      * Store all subscriptions.
@@ -36,7 +33,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
      * @return title string
      */
     get getTitle(): string {
-        return ( this.isNew ? 'Add ' : '' ) + 'Client';
+        return ( this.isNew ? 'Add ' : '' ) + 'Visit';
     }
 
     get formNoValid(): boolean {
@@ -45,7 +42,6 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
 
     constructor(
         private formBuilder: FormBuilder,
-        private _clientsService: ClientsService,
         private _visitsService: VisitsService,
         private _alertService: AlertService,
         private _route: ActivatedRoute,
@@ -59,16 +55,19 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
         this._route.paramMap
             .pipe(
                 tap( ( params: ParamMap ) => {
-                    this.paramId = params.get( CLIENTS.ID );
-                    this.isNew = this.paramId === 'add';
+                    console.log( 'Params', params );
+                    this.paramId = params.get( VISITS.ID );
+                    this.paramClientId = params.get( VISITS.CLIENTID );
+                    this.isNew = this.paramId === null;
                     if ( this.isNew ) {
                         this._createForm( null );
                         this.setEditMode();
                     } else {
-                        this._clientsService.getItemById( this.paramId )
+                        this._visitsService.getItemById( this.paramId )
                             .pipe(
                                 takeUntil( this._unsubscribeAll ),
-                                tap( ( item: IClient ) => {
+                                tap( ( item: IVisit ) => {
+                                    this.paramClientId = this.paramClientId ? this.paramClientId : item.clientId;
                                     this._createForm( item );
                                     this.setReadMode();
                                 } )
@@ -77,14 +76,6 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                 } )
             ).subscribe();
 
-    }
-
-    visits(): void {
-        this._router.navigate( [ '/visits/list/' + this.paramId ], { relativeTo: this._route } )
-            .then( ( succeeded: boolean ) => {
-            } )
-            .catch( error => {
-            } );
     }
 
     /**
@@ -114,14 +105,14 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
     }
 
     /**
-     * Save changes to existing client OR create a new client.
+     * Save changes to existing visit OR create a new visit.
      * @return void
      */
     onSubmit(): void {
-        const item: IClient = this.form.value;
+        const item: IVisit = this.form.value;
         if ( this.form.valid ) {
             if ( this.isNew ) {
-                this._clientsService.addItem( item )
+                this._visitsService.addItem( item )
                     .pipe(
                         take( 1 ),
                         tap( () => {
@@ -130,7 +121,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                         } )
                     ).subscribe();
             } else {
-                this._clientsService.updateItem( item )
+                this._visitsService.updateItem( item )
                     .pipe(
                         take( 1 ),
                         tap( () => {
@@ -139,18 +130,19 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                         } )
                     ).subscribe();
             }
+            this.back();
         }
     }
 
     /**
-     * Delete a client.
+     * Delete a visit.
      * @return void
      */
     delete(): void {
         this._alertService.areYouSure()
             .then( ( response: boolean ) => {
                 if ( response ) {
-                    this._clientsService.deleteItem( this.form.value )
+                    this._visitsService.deleteItem( this.form.value )
                         .pipe(
                             take( 1 ),
                             tap( () => {
@@ -163,36 +155,43 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
     }
 
     /**
-     * Go back to client list.
+     * Go back to client visits list.
      * @return void
      */
     back(): void {
         setTimeout( () => {
-            this._router.navigate( [ '../list' ], { relativeTo: this._route } )
+            this._router.navigate( [ '/visits/list/', this.paramClientId ])
                 .then( ( succeeded: boolean ) => {
                 } )
                 .catch( error => {
-                    console.log( 'Navigate from client record back to client list', error );
+                    console.log('Navigate from visit record back to client\'s visit list', error);
                 } );
-        }, 10 );
+        }, 10);
     }
 
     /**
-     * Define the client form with defaults or real values.
+     * Define the visit form with defaults or real values.
      * @param item
      * @return void
      * @private
      */
-    private _createForm( item: IClient = null ): void {
+    private _createForm( item: IVisit = null ): void {
         this.form = this.formBuilder.group( {
             id: [ item ? item.id : '', Validators.compose( [] ) ],
-            address: [ item ? item.address : '', Validators.compose( [ Validators.required ] ) ],
-            customerNumber: [ item ? item.customerNumber : '', Validators.compose( [ Validators.required ] ) ],
-            feedingRoutine: [ item ? item.feedingRoutine : '', Validators.compose( [] ) ],
-            health: [ item ? item.health : '', Validators.compose( [] ) ],
-            name: [ item ? item.name : '', Validators.compose( [ Validators.required ] ) ],
-            other: [ item ? item.other : '', Validators.compose( [] ) ],
-            petName: [ item ? item.petName : '', Validators.compose( [ Validators.required ] ) ]
+            clientId: [ item && item.clientId ? item.clientId : this.paramClientId, Validators.compose( [ Validators.required ] ) ],
+            dt: [ item ? item.dt : '', Validators.compose( [ Validators.required ] ) ],
+            dtDay: [ item ? item.dtDay : '', Validators.compose( [] ) ],
+            dtMonth: [ item ? item.dtMonth : '', Validators.compose( [] ) ],
+            dtYear: [ item ? item.dtYear : '', Validators.compose( [] ) ],
+            foodIntakeAm: [ item ? item.foodIntakeAm : '', Validators.compose( [] ) ],
+            foodIntakePm: [ item ? item.foodIntakePm : '', Validators.compose( [] ) ],
+            liquidIntake: [ item ? item.liquidIntake : '', Validators.compose( [] ) ],
+            medication: [ item ? item.medication : '', Validators.compose( [] ) ],
+            name: [ item ? item.name : '', Validators.compose( [] ) ],
+            notes: [ item ? item.notes : '', Validators.compose( [] ) ],
+            securityCheck: [ item ? item.securityCheck : '', Validators.compose( [] ) ],
+            visualCheckAm: [ item ? item.visualCheckAm : '', Validators.compose( [] ) ],
+            visualCheckPm: [ item ? item.visualCheckPm : '', Validators.compose( [] ) ]
         } );
     }
 

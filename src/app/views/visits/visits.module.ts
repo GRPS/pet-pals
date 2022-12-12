@@ -1,17 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ClientsListComponent } from './pages/list/clients-list.component';
-import { ClientsService } from './services/clients.service';
-import { RecordComponent } from './pages/record/record.component';
 import { CanDeactivateGuard } from '../../shared/directives/can-deactivate-guard.service';
+import { VisitsListComponent } from './pages/list/visits-list.component';
+import { RecordComponent } from './pages/record/record.component';
+import { VisitsService } from './services/visits.service';
 import { SharedComponentsModule } from '../../shared/layout/shared-components.module';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { VisitsService } from '../visits/services/visits.service';
 
 @NgModule( {
     declarations: [
-        ClientsListComponent,
+        VisitsListComponent,
         RecordComponent
     ],
     imports: [
@@ -22,19 +21,19 @@ import { VisitsService } from '../visits/services/visits.service';
             {
                 path: '',
                 pathMatch: 'full',
-                redirectTo: 'list'
+                redirectTo: '../clients'
             },
             {
-                path: 'list',
-                component: ClientsListComponent
+                path: 'list/:clientId',
+                component: VisitsListComponent
             },
             {
-                path: ':id',
+                path: 'add/:clientId',
                 canDeactivate: [ CanDeactivateGuard ],
                 component: RecordComponent
             },
             {
-                path: 'add',
+                path: ':id',
                 canDeactivate: [ CanDeactivateGuard ],
                 component: RecordComponent
             }
@@ -42,9 +41,8 @@ import { VisitsService } from '../visits/services/visits.service';
     ],
     exports: [],
     providers: [
-        ClientsService,
         VisitsService
     ]
 } )
-export class ClientsModule {
+export class VisitsModule {
 }

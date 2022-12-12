@@ -13,6 +13,11 @@ const routes: Routes = [
         path: 'clients',
         component: LayoutComponent,
         loadChildren: () => import( './views/clients/clients.module' ).then( m => m.ClientsModule )
+    },
+    {
+        path: 'visits',
+        component: LayoutComponent,
+        loadChildren: () => import( './views/visits/visits.module' ).then( m => m.VisitsModule )
     }
 ];
 

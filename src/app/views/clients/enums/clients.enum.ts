@@ -1,3 +1,3 @@
-export enum CLIENTS{
-
+export enum CLIENTS {
+    ID = 'id'
 }
