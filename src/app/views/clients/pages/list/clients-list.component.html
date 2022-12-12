@@ -1,6 +1,6 @@
 <ng-container *ngIf="clientsService.items$ | async as items">
 
-    <app-header title="Clients">
+    <app-header title="Clients" [subTitle]="'(Counter: '+(clientsService.countClient$ | async)+')'">
         <button type="button" class="btn btn-primary btn-sm" routerLink="/clients/add">Add</button>
     </app-header>
 

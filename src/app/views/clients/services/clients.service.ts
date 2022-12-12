@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, CollectionReference, Query } from '@angular/fire/firestore';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { catchError, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IClient } from '../models/entities/client';
 import { VisitsService } from '../../visits/services/visits.service';
+import { IClientCount } from '../../../shared/models/entities/setting';
+import { SearchService } from '../../../shared/service/search.service';
 
 @Injectable()
 export class ClientsService {
 
-    private _maxPerPage: number = 2;
+    private _maxPerPage = 2;
 
     tableData: any[] = [];
     /**
@@ -25,21 +27,39 @@ export class ClientsService {
     disable_next: boolean = false;
     disable_prev: boolean = false;
 
+    searchTerm: string;
+
+    /**
+     * Keep count of clients.
+     * @private
+     */
+    private _countClientSubject: BehaviorSubject<string> = new BehaviorSubject<string>( '' );
+    countClient$: Observable<string> = this._countClientSubject.asObservable();
+
     constructor(
         private store: AngularFirestore,
-        private _visitService: VisitsService
+        private _visitService: VisitsService,
+        private _searchService: SearchService
     ) {
+        this._getCurrentClientCountFromFirebase();
     }
 
     /**
      * Load all items from Firebase.
      * @return void.
      */
-    loadItems( searchTerm: string = '' ) {
-        this.store.collection( CollectionEnum.CLIENTS, ref => ref
-            .where( 'petName', '==', searchTerm )
-            .limit( this._maxPerPage )
-            .orderBy( 'customerNumber', 'asc' )
+    loadItems( searchTerm: string ) {
+        this.searchTerm = searchTerm;
+        console.log('loadItems now!!!');
+        this.store.collection( CollectionEnum.CLIENTS, ref => {
+                let query: Query = ref;
+                if ( searchTerm !== '' ) {
+                    query = query.where( 'petName', '==', searchTerm );
+                }
+                query = query.limit( this._maxPerPage );
+                query = query.orderBy( 'customerNumber', 'asc' );
+                return query;
+            }
         ).snapshotChanges()
             .pipe(
                 take( 1 ),
@@ -100,10 +120,16 @@ export class ClientsService {
      */
     nextPage(): void {
         this.disable_next = true;
-        this.store.collection( CollectionEnum.CLIENTS, ref => ref
-            .limit( this._maxPerPage )
-            .orderBy( 'customerNumber', 'asc' )
-            .startAfter( this.lastInResponse )
+        this.store.collection( CollectionEnum.CLIENTS, ref => {
+                let query: Query = ref;
+                if ( this.searchTerm ) {
+                    query = query.where( 'petName', '==', this.searchTerm );
+                }
+                query = query.limit( this._maxPerPage );
+                query = query.orderBy( 'customerNumber', 'asc' );
+                query = query.startAfter( this.lastInResponse );
+                return query;
+            }
         ).get()
             .pipe(
                 take( 1 ),
@@ -141,11 +167,17 @@ export class ClientsService {
      */
     prevPage(): void {
         this.disable_prev = true;
-        this.store.collection( CollectionEnum.CLIENTS, ref => ref
-            .orderBy( 'customerNumber', 'asc' )
-            .startAt( this.get_prev_startAt() )
-            .endBefore( this.firstInResponse )
-            .limit( this._maxPerPage )
+        this.store.collection( CollectionEnum.CLIENTS, ref => {
+                let query: Query = ref;
+                if ( this.searchTerm ) {
+                    query = query.where( 'petName', '==', this.searchTerm );
+                }
+                query = query.startAt( this.get_prev_startAt() );
+                query = query.endBefore( this.firstInResponse );
+                query = query.limit( this._maxPerPage );
+                query = query.orderBy( 'customerNumber', 'asc' );
+                return query;
+            }
         ).get()
             .pipe(
                 take( 1 ),
@@ -185,6 +217,7 @@ export class ClientsService {
         const newId: string = this.store.createId();
         return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( newId ).set( { ... item, id: newId } )
             .then( function( success ) {
+                // this.updateClientCount( true );
                 return true;
             } )
             .catch( function( error ) {
@@ -224,6 +257,7 @@ export class ClientsService {
                     if ( result ) {
                         return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
                             .then( function( success ) {
+                                // this.updateClientCount( false );
                                 return true;
                             } )
                             .catch( function( error ) {
@@ -250,6 +284,38 @@ export class ClientsService {
      */
     getItemById( id: string ): Observable<IClient> {
         return this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( id ).valueChanges();
+    }
+
+    /**
+     * Get current client count from Firebase.
+     * @return void
+     * @private
+     */
+    private _getCurrentClientCountFromFirebase(): void {
+        this.store.collection<IClientCount>( 'settings' ).doc( 'clientCount' ).valueChanges()
+            .pipe(
+                take( 1 ),
+                tap( ( response: IClientCount ) => {
+                    this._countClientSubject.next( response.counter );
+                } )
+            ).subscribe();
+    }
+
+    /**
+     * Update client count in Firebase
+     * @param isIncrement boolean should we increment or decrement the count.
+     * @param isIncrement
+     */
+    updateClientCountInFirebase( isIncrement: boolean = true ): void {
+        const newCountClient: string = isIncrement ? ( +this._countClientSubject.value + 1 ).toString() : ( +this._countClientSubject.value - 1 ).toString();
+        this.store.collection<IClientCount>( 'settings' ).doc( 'clientCount' ).set( { counter: newCountClient } )
+            .then( function( success ) {
+                this._countClientSubject.next( newCountClient );
+                return true;
+            } )
+            .catch( function( error ) {
+                return false;
+            } );
     }
 
 }

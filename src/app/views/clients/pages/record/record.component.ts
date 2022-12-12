@@ -9,7 +9,6 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { CanComponentDeactivate } from '../../../../shared/directives/can-deactivate-guard.service';
 import { CLIENTS } from '../../enums/clients.enum';
 import { VisitsService } from '../../../visits/services/visits.service';
-import { IVisit } from '../../../visits/models/entities/visits';
 
 @Component( {
     selector: 'app-record',
@@ -125,6 +124,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                     .pipe(
                         take( 1 ),
                         tap( () => {
+                            this._clientsService.updateClientCountInFirebase( true );
                             this._alertService.toast( 'Item Added!' );
                             this.back();
                         } )
@@ -154,6 +154,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                         .pipe(
                             take( 1 ),
                             tap( () => {
+                                this._clientsService.updateClientCountInFirebase( false );
                                 this.back();
                                 this._alertService.toast( 'Item deleted!' );
                             } )

@@ -26,4 +26,13 @@ export class SearchService {
         this._searchTermSubject.next( value );
     }
 
+    /**
+     * Get the search term.
+     * @return value string
+     * @return void
+     */
+    getSearchTerm(): string {
+        return this._searchTermSubject.value;
+    }
+
 }
