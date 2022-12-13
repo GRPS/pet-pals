@@ -1,0 +1,5 @@
+<div class="field">
+    <label class="form-label" [class]="cls" [for]="forValue">{{ label }}</label>
+    <ng-content></ng-content>
+    <div [innerHTML]="readValue" *ngIf="isReadMode"></div>
+</div>

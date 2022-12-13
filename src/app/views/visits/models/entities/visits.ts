@@ -2,7 +2,7 @@ export interface IVisit {
     id: string;
     clientId: string;
     dt: string;
-    dtDay: number;
+    dtDate: number;
     dtMonth: number;
     dtYear: number;
     foodIntakeAm: string;

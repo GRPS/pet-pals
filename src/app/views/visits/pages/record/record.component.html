@@ -11,23 +11,44 @@
         </ng-container>
     </app-header>
 
-    <div class="mt-3 mb-3">
-        <label class="form-label" for="dt">Date *</label>
+    <app-field forValue="dt" label="Date *" [readValue]="form.get('dt').value" [isReadMode]="!isEditMode" cls="mt-4">
         <input type="date" class="form-control" formControlName="dt" id="dt" *ngIf="isEditMode">
-        <div [innerHTML]="form.get('dt').value" *ngIf="!isEditMode"></div>
-    </div>
+    </app-field>
 
-    <div class="mb-3">
-        <label class="form-label" for="name">petpals visitor *</label>
+    <app-field forValue="name" label="Visitor Name *" [readValue]="form.get('name').value" [isReadMode]="!isEditMode">
         <input type="text" class="form-control" formControlName="name" id="name" *ngIf="isEditMode">
-        <div [innerHTML]="form.get('name').value" *ngIf="!isEditMode"></div>
-    </div>
+    </app-field>
+
+    <app-field forValue="visualCheckAm" label="Visual Check AM" [readValue]="form.get('visualCheckAm').value" [isReadMode]="!isEditMode">
+        <textarea rows="5" class="form-control" formControlName="visualCheckAm" id="visualCheckAm" *ngIf="isEditMode"></textarea>
+    </app-field>
+
+    <app-field forValue="visualCheckPm" label="Visual Check PM" [readValue]="form.get('visualCheckPm').value" [isReadMode]="!isEditMode">
+        <textarea rows="5" class="form-control" formControlName="visualCheckPm" id="visualCheckPm" *ngIf="isEditMode"></textarea>
+    </app-field>
+
+    <app-field forValue="foodIntakeAm" label="Food Intake AM" [readValue]="form.get('foodIntakeAm').value" [isReadMode]="!isEditMode">
+        <textarea rows="5" class="form-control" formControlName="foodIntakeAm" id="foodIntakeAm" *ngIf="isEditMode"></textarea>
+    </app-field>
+
+    <app-field forValue="foodIntakePm" label="Food Intake PM" [readValue]="form.get('foodIntakePm').value" [isReadMode]="!isEditMode">
+        <textarea rows="5" class="form-control" formControlName="foodIntakePm" id="foodIntakePm" *ngIf="isEditMode"></textarea>
+    </app-field>
+
+    <app-field forValue="medication" label="Medication" [readValue]="form.get('medication').value" [isReadMode]="!isEditMode">
+        <textarea rows="5" class="form-control" formControlName="medication" id="medication" *ngIf="isEditMode"></textarea>
+    </app-field>
+
+    <app-field forValue="securityCheck" label="Security Check" [readValue]="form.get('securityCheck').value" [isReadMode]="!isEditMode">
+        <textarea rows="5" class="form-control" formControlName="securityCheck" id="securityCheck" *ngIf="isEditMode"></textarea>
+    </app-field>
+
+    <app-field forValue="notes" label="Notes" [readValue]="form.get('notes').value" [isReadMode]="!isEditMode">
+        <textarea rows="5" class="form-control" formControlName="notes" id="notes" *ngIf="isEditMode"></textarea>
+    </app-field>
 
     <div class="text-end mb-4">
         <button type="button" class="btn btn-danger btn-sm" (click)="delete()" *ngIf="!isNew">Delete</button>
     </div>
 
-    <pre>
-        {{ form.value | json }}
-    </pre>
 </form>

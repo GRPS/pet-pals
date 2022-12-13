@@ -12,47 +12,33 @@
         </ng-container>
     </app-header>
 
-    <div class="mt-3 mb-3">
-        <label class="form-label" for="customerNumber">Customer Number *</label>
+    <app-field forValue="dt" label="Customer Number *" [readValue]="form.get('customerNumber').value" [isReadMode]="!isEditMode" cls="mt-4">
         <input type="text" class="form-control" formControlName="customerNumber" id="customerNumber" *ngIf="isEditMode">
-        <div [innerHTML]="form.get('customerNumber').value" *ngIf="!isEditMode"></div>
-    </div>
+    </app-field>
 
-    <div class="mb-3">
-        <label class="form-label" for="name">Name *</label>
+    <app-field forValue="name" label="Name *" [readValue]="form.get('name').value" [isReadMode]="!isEditMode">
         <input type="text" class="form-control" formControlName="name" id="name" *ngIf="isEditMode">
-        <div [innerHTML]="form.get('name').value" *ngIf="!isEditMode"></div>
-    </div>
+    </app-field>
 
-    <div class="mb-3">
-        <label class="form-label" for="address">Address *</label>
-        <textarea rows="5" class="form-control" formControlName="address" id="address" *ngIf="isEditMode"></textarea>
-        <div [innerHTML]="form.get('address').value" *ngIf="!isEditMode"></div>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label" for="petName">Pet Name *</label>
+    <app-field forValue="petName" label="Pet Name *" [readValue]="form.get('petName').value" [isReadMode]="!isEditMode">
         <input type="text" class="form-control" formControlName="petName" id="petName" *ngIf="isEditMode">
-        <div [innerHTML]="form.get('petName').value" *ngIf="!isEditMode"></div>
-    </div>
+    </app-field>
 
-    <div class="mb-3">
-        <label class="form-label" for="health">Health</label>
+    <app-field forValue="address" label="Address *" [readValue]="form.get('address').value" [isReadMode]="!isEditMode">
+        <textarea rows="5" class="form-control" formControlName="address" id="address" *ngIf="isEditMode"></textarea>
+    </app-field>
+
+    <app-field forValue="health" label="Health" [readValue]="form.get('health').value" [isReadMode]="!isEditMode">
         <textarea rows="5" class="form-control" formControlName="health" id="health" *ngIf="isEditMode"></textarea>
-        <div [innerHTML]="form.get('health').value" *ngIf="!isEditMode"></div>
-    </div>
+    </app-field>
 
-    <div class="mb-3">
-        <label class="form-label" for="feedingRoutine">Feeding Routine</label>
+    <app-field forValue="feedingRoutine" label="Feeding Routine" [readValue]="form.get('feedingRoutine').value" [isReadMode]="!isEditMode">
         <textarea rows="5" class="form-control" formControlName="feedingRoutine" id="feedingRoutine" *ngIf="isEditMode"></textarea>
-        <div [innerHTML]="form.get('feedingRoutine').value" *ngIf="!isEditMode"></div>
-    </div>
+    </app-field>
 
-    <div class="mb-3">
-        <label class="form-label" for="other">Other</label>
+    <app-field forValue="other" label="Other" [readValue]="form.get('other').value" [isReadMode]="!isEditMode">
         <textarea rows="5" class="form-control" formControlName="other" id="other" *ngIf="isEditMode"></textarea>
-        <div [innerHTML]="form.get('other').value" *ngIf="!isEditMode"></div>
-    </div>
+    </app-field>
 
     <div class="text-end mb-4">
         <button type="button" class="btn btn-danger btn-sm" (click)="delete()" *ngIf="!isNew">Delete</button>

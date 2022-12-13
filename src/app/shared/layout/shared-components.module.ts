@@ -5,12 +5,14 @@ import { HeaderComponent } from './partials/header/header.component';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { FieldComponent } from './partials/field/field.component';
 
 @NgModule({
     declarations: [
         LayoutComponent,
         TopMenuComponent,
-        HeaderComponent
+        HeaderComponent,
+        FieldComponent
     ],
     imports: [
         CommonModule,
@@ -20,7 +22,8 @@ import { FormsModule } from '@angular/forms';
     exports: [
         LayoutComponent,
         TopMenuComponent,
-        HeaderComponent
+        HeaderComponent,
+        FieldComponent
     ]
 })
 export class SharedComponentsModule { }

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from '../../../../shared/service/alert.service';
-import { take, takeUntil, tap } from 'rxjs/operators';
+import { filter, take, takeUntil, tap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { CanComponentDeactivate } from '../../../../shared/directives/can-deactivate-guard.service';
@@ -75,6 +75,26 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                     }
                 } )
             ).subscribe();
+
+        /**
+         * Watch for changes to the date.
+         */
+        if ( this.form ) {
+            this.form.get( 'dt' ).valueChanges
+                .pipe(
+                    filter( f => this.form.enabled ),
+                    takeUntil( this._unsubscribeAll ),
+                    tap( ( value: string ) => {
+                        const newDate: Date = new Date( value );
+                        const dtDay: number = newDate.getDate();
+                        const dtMonth: number = newDate.getMonth() + 1;
+                        const dtYear: number = newDate.getFullYear();
+                        this.form.get( 'dtDate' ).setValue( dtDay, { emitEvent: false } );
+                        this.form.get( 'dtMonth' ).setValue( dtMonth, { emitEvent: false } );
+                        this.form.get( 'dtYear' ).setValue( dtYear, { emitEvent: false } );
+                    } )
+                ).subscribe();
+        }
 
     }
 
@@ -180,7 +200,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
             id: [ item ? item.id : '', Validators.compose( [] ) ],
             clientId: [ item && item.clientId ? item.clientId : this.paramClientId, Validators.compose( [ Validators.required ] ) ],
             dt: [ item ? item.dt : '', Validators.compose( [ Validators.required ] ) ],
-            dtDay: [ item ? item.dtDay : '', Validators.compose( [] ) ],
+            dtDate: [ item ? item.dtDate : '', Validators.compose( [] ) ],
             dtMonth: [ item ? item.dtMonth : '', Validators.compose( [] ) ],
             dtYear: [ item ? item.dtYear : '', Validators.compose( [] ) ],
             foodIntakeAm: [ item ? item.foodIntakeAm : '', Validators.compose( [] ) ],
