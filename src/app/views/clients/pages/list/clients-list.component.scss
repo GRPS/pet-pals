@@ -24,4 +24,11 @@ tbody tr {
     display: flex;
     justify-content: space-between;
     margin-top: 0.5rem;
+    small {
+      margin-top: 5px;
+        color: #1F72B6;
+    }
+    button:enabled {
+        color: #1F72B6;
+    }
 }
