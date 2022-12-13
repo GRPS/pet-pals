@@ -47,7 +47,6 @@
         <textarea rows="5" class="form-control" formControlName="notes" id="notes" *ngIf="isEditMode"></textarea>
     </app-field>
 
-    <pre>{{ form.value | json }}</pre>
     <div class="text-end mb-4">
         <button type="button" class="btn btn-danger btn-sm" (click)="delete()" *ngIf="!isNew">Delete</button>
     </div>

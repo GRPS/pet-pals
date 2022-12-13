@@ -1,32 +1,28 @@
-<ng-container *ngIf="visitsService.items$ | async as items">
+<ng-container *ngIf="(visitsService.items$ | async) as items">
 
-    <ng-container *ngIf="(visitsService.items$ | async).length as visitCount">
+    <app-header title="All Visits" [badge]="items.length.toString()">
+        <button type="button" class="btn btn-info btn-sm" (click)="add()">Add <i class="bi bi-plus"></i></button>
+        <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
+    </app-header>
 
-        <app-header title="All Visits" [badge]="visitCount.toString()">
-            <button type="button" class="btn btn-info btn-sm" (click)="add()">Add <i class="bi bi-plus"></i></button>
-            <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
-        </app-header>
-
-        <div class="table-responsive mt-4">
-            <table class="table table-bordered table-hover table-sm">
-                <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Name</th>
-                    <th>Notes</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let item of items" (click)="open(item, $event)">
-                    <td>{{ item.dt }}</td>
-                    <td>{{ item.name }}</td>
-                    <td style="white-space: break-spaces;">{{ item.notes }}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-    </ng-container>
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered table-hover table-sm">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Notes</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of items" (click)="open(item, $event)">
+                <td>{{ item.dt }}</td>
+                <td>{{ item.name }}</td>
+                <td style="white-space: break-spaces;">{{ item.notes }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
 </ng-container>
 
