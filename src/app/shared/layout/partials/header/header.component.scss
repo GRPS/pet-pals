@@ -1,10 +1,17 @@
 h3 {
     display: inline;
     color: #1F72B6;
+    span {
+        position: relative;
+        color: #c4c4c4;
+        font-size: 60%;
+        top: -10px;
+        left: 10px;
+    }
 }
 
 h6 {
     display: inline;
-    color: #c4c4c4;
+    color: #999999;
     margin-left: 1rem;
 }

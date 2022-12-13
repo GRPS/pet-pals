@@ -26,9 +26,12 @@ tbody tr {
     margin-top: 0.5rem;
     small {
       margin-top: 5px;
-        color: #1F72B6;
+        color: #999999;
     }
     button:enabled {
         color: #1F72B6;
+        i {
+            color: #1F72B6;
+        }
     }
 }
