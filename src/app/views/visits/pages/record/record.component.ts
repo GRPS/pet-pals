@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from '../../../../shared/service/alert.service';
-import { filter, take, takeUntil, tap } from 'rxjs/operators';
+import { take, takeUntil, tap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { CanComponentDeactivate } from '../../../../shared/directives/can-deactivate-guard.service';
 import { IVisit } from '../../models/entities/visits';
 import { VisitsService } from '../../services/visits.service';
@@ -51,50 +51,34 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
 
     ngOnInit(): void {
 
-        // Are we adding a new record or loading an existing?
+        // Parameters have changed, so let's do something.
         this._route.paramMap
             .pipe(
                 tap( ( params: ParamMap ) => {
-                    console.log( 'Params', params );
                     this.paramId = params.get( VISITS.ID );
                     this.paramClientId = params.get( VISITS.CLIENTID );
                     this.isNew = this.paramId === null;
-                    if ( this.isNew ) {
+                    if ( this.isNew ) { // Create a new visit form.
                         this._createForm( null );
+                        this.form.get( VISITS.CLIENTID ).setValue( this.paramClientId, { emitEvent: false } );
+                        this.watchControlDtForChanges();
                         this.setEditMode();
-                    } else {
+                    } else { // Update an existing visit form.
                         this._visitsService.getItemById( this.paramId )
                             .pipe(
-                                takeUntil( this._unsubscribeAll ),
+                                take( 1 ),
                                 tap( ( item: IVisit ) => {
+                                    // We could have been passed either 1 or 2 parameters: '/add/<clientId>' or '/<clientId>'.
                                     this.paramClientId = this.paramClientId ? this.paramClientId : item.clientId;
+
                                     this._createForm( item );
+                                    this.watchControlDtForChanges();
                                     this.setReadMode();
                                 } )
                             ).subscribe();
                     }
                 } )
             ).subscribe();
-
-        /**
-         * Watch for changes to the date.
-         */
-        if ( this.form ) {
-            this.form.get( 'dt' ).valueChanges
-                .pipe(
-                    filter( f => this.form.enabled ),
-                    takeUntil( this._unsubscribeAll ),
-                    tap( ( value: string ) => {
-                        const newDate: Date = new Date( value );
-                        const dtDay: number = newDate.getDate();
-                        const dtMonth: number = newDate.getMonth() + 1;
-                        const dtYear: number = newDate.getFullYear();
-                        this.form.get( 'dtDate' ).setValue( dtDay, { emitEvent: false } );
-                        this.form.get( 'dtMonth' ).setValue( dtMonth, { emitEvent: false } );
-                        this.form.get( 'dtYear' ).setValue( dtYear, { emitEvent: false } );
-                    } )
-                ).subscribe();
-        }
 
     }
 
@@ -180,13 +164,13 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
      */
     back(): void {
         setTimeout( () => {
-            this._router.navigate( [ '/visits/list/', this.paramClientId ])
+            this._router.navigate( [ '/visits/list/', this.paramClientId ] )
                 .then( ( succeeded: boolean ) => {
                 } )
                 .catch( error => {
-                    console.log('Navigate from visit record back to client\'s visit list', error);
+                    console.log( 'Navigate from visit record back to client\'s visit list', error );
                 } );
-        }, 10);
+        }, 10 );
     }
 
     /**
@@ -213,6 +197,23 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
             visualCheckAm: [ item ? item.visualCheckAm : '', Validators.compose( [] ) ],
             visualCheckPm: [ item ? item.visualCheckPm : '', Validators.compose( [] ) ]
         } );
+    }
+
+    /**
+     * Watch for control 'dt' for changes.
+     * @private
+     */
+    private watchControlDtForChanges(): void {
+        this.form.get( 'dt' ).valueChanges
+            .pipe(
+                takeUntil( this._unsubscribeAll ),
+                tap( ( value: string ) => {
+                    const newDate: Date = new Date( value );
+                    this.form.get( VISITS.DTDATE ).setValue( newDate.getDate(), { emitEvent: false } );
+                    this.form.get( VISITS.DTMONTH ).setValue( newDate.getMonth() + 1, { emitEvent: false } );
+                    this.form.get( VISITS.DTYEAR ).setValue( newDate.getFullYear(), { emitEvent: false } );
+                } )
+            ).subscribe();
     }
 
     canDeactivate(): Observable<boolean> | boolean {

@@ -7,6 +7,7 @@ import { IClient } from '../models/entities/client';
 import { VisitsService } from '../../visits/services/visits.service';
 import { IClientCount } from '../../../shared/models/entities/setting';
 import { SearchService } from '../../../shared/service/search.service';
+import { CLIENTS } from '../enums/clients.enum';
 
 @Injectable()
 export class ClientsService {
@@ -123,10 +124,10 @@ export class ClientsService {
         this.store.collection( CollectionEnum.CLIENTS, ref => {
                 let query: Query = ref;
                 if ( this.searchTerm ) {
-                    query = query.where( 'petName', '==', this.searchTerm );
+                    query = query.where( CLIENTS.PETNAME, '==', this.searchTerm );
                 }
                 query = query.limit( this._maxPerPage );
-                query = query.orderBy( 'customerNumber', 'asc' );
+                query = query.orderBy( CLIENTS.CUSTOMERNUMBER, 'asc' );
                 query = query.startAfter( this.lastInResponse );
                 return query;
             }
@@ -170,10 +171,10 @@ export class ClientsService {
         this.store.collection( CollectionEnum.CLIENTS, ref => {
                 let query: Query = ref;
                 if ( this.searchTerm ) {
-                    query = query.where( 'petName', '==', this.searchTerm );
+                    query = query.where( CLIENTS.PETNAME, '==', this.searchTerm );
                 }
                 query = query.limit( this._maxPerPage );
-                query = query.orderBy( 'customerNumber', 'asc' );
+                query = query.orderBy( CLIENTS.CUSTOMERNUMBER, 'asc' );
                 query = query.startAt( this.get_prev_startAt() );
                 query = query.endBefore( this.firstInResponse );
                 return query;
@@ -292,7 +293,7 @@ export class ClientsService {
      * @private
      */
     private _getCurrentClientCountFromFirebase(): void {
-        this.store.collection<IClientCount>( 'settings' ).doc( 'clientCount' ).valueChanges()
+        this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).valueChanges()
             .pipe(
                 take( 1 ),
                 tap( ( response: IClientCount ) => {
@@ -308,7 +309,7 @@ export class ClientsService {
      */
     updateClientCountInFirebase( isIncrement: boolean = true ): void {
         const newCountClient: string = isIncrement ? ( +this._countClientSubject.value + 1 ).toString() : ( +this._countClientSubject.value - 1 ).toString();
-        this.store.collection<IClientCount>( 'settings' ).doc( 'clientCount' ).set( { counter: newCountClient } )
+        this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).set( { counter: newCountClient } )
             .then( function( success ) {
                 this._countClientSubject.next( newCountClient );
                 return true;

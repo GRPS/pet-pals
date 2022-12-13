@@ -4,6 +4,7 @@ import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IVisit } from '../models/entities/visits';
+import { VISITS } from '../enums/visits.enum';
 
 @Injectable()
 export class VisitsService {
@@ -25,8 +26,8 @@ export class VisitsService {
      */
     loadItems( clientId: string, searchTerm: string = '' ) {
         this.store.collection( CollectionEnum.VISITS, ref => ref
-            .where( 'clientId', '==', clientId )
-            .orderBy( 'dt', 'desc' )
+            .where( VISITS.CLIENTID, '==', clientId )
+            .orderBy( VISITS.DT, 'desc' )
         ).get()
             .pipe(
                 take( 1 ),
@@ -44,7 +45,7 @@ export class VisitsService {
 
     deleteAllClientVisits( clientId: string ): Observable<boolean> {
         return this.store.collection( CollectionEnum.VISITS, ref => ref
-            .where( 'clientId', '==', clientId )
+            .where( VISITS.CLIENTID, '==', clientId )
         ).get()
             .pipe(
                 take( 1 ),

@@ -5,6 +5,7 @@ import { SearchService } from '../../../../shared/service/search.service';
 import { tap } from 'rxjs/operators';
 import { VisitsService } from '../../services/visits.service';
 import { IVisit } from '../../models/entities/visits';
+import { VISITS } from '../../enums/visits.enum';
 
 @Component( {
     selector: 'app-visits-list',
@@ -35,7 +36,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
         this._route.paramMap
             .pipe(
                 tap( ( params: ParamMap ) => {
-                    this.paramClientId = params.get( 'clientId' );
+                    this.paramClientId = params.get( VISITS.CLIENTID );
                     this.visitsService.loadItems( this.paramClientId, null );
                 } )
             ).subscribe();

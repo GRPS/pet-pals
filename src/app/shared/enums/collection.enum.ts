@@ -1,4 +1,5 @@
 export enum CollectionEnum {
     CLIENTS = 'clients',
-    VISITS = 'visits'
+    VISITS = 'visits',
+    SETTINGS = 'settings'
 }

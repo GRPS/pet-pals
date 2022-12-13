@@ -1,3 +1,6 @@
 export enum CLIENTS {
-    ID = 'id'
+    ID = 'id',
+    PETNAME = 'petName',
+    CUSTOMERNUMBER = 'customerNumber',
+    CLIENTCOUNT = 'clientCount'
 }

@@ -2,7 +2,7 @@
 
     <ng-container *ngIf="(visitsService.items$ | async).length as visitCount">
 
-        <app-header title="Visit Logs" [badge]="visitCount.toString()">
+        <app-header title="All Visits" [badge]="visitCount.toString()">
             <button type="button" class="btn btn-info btn-sm" (click)="add()">Add <i class="bi bi-plus"></i></button>
             <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
         </app-header>
