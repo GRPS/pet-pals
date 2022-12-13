@@ -33,7 +33,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
      * @return title string
      */
     get getTitle(): string {
-        return ( this.isNew ? 'Add ' : '' ) + 'Visit Log';
+        return ( this.isNew ? 'Add ' : '' ) + 'Visit';
     }
 
     get formNoValid(): boolean {
