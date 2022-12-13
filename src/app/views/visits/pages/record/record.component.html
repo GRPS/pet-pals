@@ -2,12 +2,12 @@
 
     <app-header [title]="getTitle">
         <ng-container *ngIf="!isEditMode">
-            <button type="button" class="btn btn-primary btn-sm" (click)="setEditMode()">Edit</button>
-            <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Back</button>
+            <button type="button" class="btn btn-primary btn-sm" (click)="setEditMode()">Edit <i class="bi bi-pencil"></i></button>
+            <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
         </ng-container>
         <ng-container *ngIf="isEditMode">
-            <button type="button" class="btn btn-success btn-sm" (click)="onSubmit()" [disabled]="formNoValid">Save</button>
-            <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Cancel</button>
+            <button type="button" class="btn btn-success btn-sm" (click)="onSubmit()" [disabled]="formNoValid">Save <i class="bi bi-check2"></i></button>
+            <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Cancel <i class="bi bi-x-lg"></i></button>
         </ng-container>
     </app-header>
 

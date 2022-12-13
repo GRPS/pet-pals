@@ -1,8 +1,8 @@
 <ng-container *ngIf="visitsService.items$ | async as items">
 
     <app-header title="Client Visit Logs" [subTitle]="'(Counter: '+(visitsService.items$ | async).length+')'">
-        <button type="button" class="btn btn-primary btn-sm" (click)="add()">Add</button>
-        <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Back</button>
+        <button type="button" class="btn btn-info btn-sm" (click)="add()">Add <i class="bi bi-plus"></i></button>
+        <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
     </app-header>
 
     <div class="table-responsive mt-4">
