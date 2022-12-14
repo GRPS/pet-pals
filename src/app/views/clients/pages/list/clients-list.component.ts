@@ -120,7 +120,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             item.other += i;
             this.clientsService.addItem( item );
         }
-        this.clientsService.loadBatch( this.searchTerm, true );
+        alert('Please refresh page.');
     }
 
     /**
