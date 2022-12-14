@@ -31,10 +31,13 @@
             </table>
         </div>
 
-        <div class="nextBatch mt-4 mb-4" *ngIf="searchTerm===''">
+        <div class="nextBatch mt-4 mb-4" *ngIf="searchTerm==='' && items.length != clientCount else allLoaded">
             <button type="button" class="btn btn-secondary btn-sm" (click)="nextBatch()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load next batch...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
         </div>
 
+        <ng-template #allLoaded>
+            <p class="nextBatch">All {{ clientCount }} clients have been loaded.</p>
+        </ng-template>
 
     </ng-container>
 
