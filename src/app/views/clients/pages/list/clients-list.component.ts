@@ -58,9 +58,14 @@ export class ClientsListComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
+    /**
+     * Load next batch of clients.
+     * @return void
+     */
     nextBatch(): void {
         this.clientsService.loadBatch( this.searchTerm );
     }
+
     /**
      * Open a client record.
      * @param item IClient
@@ -91,6 +96,10 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             } );
     }
 
+    /**
+     * Add dummy data.
+     * @return void.
+     */
     dummyData(): void {
         for ( let i = 1; i <= this.clientsService.getMaxPerPage(); i++ ) {
             const item: IClient = {
@@ -111,9 +120,13 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             item.other += i;
             this.clientsService.addItem( item );
         }
-        alert('Dummies created.');
+        this.clientsService.loadBatch( this.searchTerm, true );
     }
 
+    /**
+     * Delete all dummy data.
+     * @return void
+     */
     dummyDataDelete(): void {
         this.clientsService.getDummyData()
             .pipe(
@@ -122,6 +135,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
                     items.forEach( ( item: IClient, index ) => {
                         this.clientsService.deleteDummy( item );
                     } );
+                    alert('Please refresh page.');
                 } )
             ).subscribe();
     }
