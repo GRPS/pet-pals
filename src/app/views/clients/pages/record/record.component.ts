@@ -124,7 +124,6 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                     .pipe(
                         take( 1 ),
                         tap( () => {
-                            this._clientsService.updateClientCountInFirebase( true );
                             this._alertService.toast( 'Item Added!' );
                             this.back();
                         } )
@@ -154,7 +153,6 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                         .pipe(
                             take( 1 ),
                             tap( () => {
-                                this._clientsService.updateClientCountInFirebase( false );
                                 this.back();
                                 this._alertService.toast( 'Item deleted!' );
                             } )

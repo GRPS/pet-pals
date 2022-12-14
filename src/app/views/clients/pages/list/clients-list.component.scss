@@ -28,12 +28,16 @@ table {
     }
 }
 
-.pagination {
+.nextBatch {
     display: flex;
-    justify-content: space-between;
-    margin-top: 0.5rem;
+    justify-content: center;
+}
+
+.loadInfo {
+    display: flex;
+    justify-content: center;
     small {
-      margin-top: 5px;
+        margin-top: 5px;
         color: #999999;
     }
     button:enabled {

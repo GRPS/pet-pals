@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ApplicationRef, Component, ComponentFactoryResolver, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IClient } from '../../models/entities/client';
 import { ClientsService } from '../../services/clients.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SearchService } from '../../../../shared/service/search.service';
-import { takeUntil, tap } from 'rxjs/operators';
+import { skip, takeUntil, tap } from 'rxjs/operators';
 
 @Component( {
     selector: 'app-clients-list',
@@ -19,12 +19,18 @@ export class ClientsListComponent implements OnInit, OnDestroy {
      */
     private _unsubscribeAll = new Subject();
 
+    // Used for nextBatch
+    searchTerm: string = '';
+
     constructor(
         public clientsService: ClientsService,
         private _route: ActivatedRoute,
         private _router: Router,
         private _searchService: SearchService
     ) {
+        if ( !clientsService.areClientsLoaded() ) {
+            this.clientsService.loadBatch( this.searchTerm, true );
+        }
     }
 
     ngOnInit(): void {
@@ -33,9 +39,11 @@ export class ClientsListComponent implements OnInit, OnDestroy {
         this._searchService.searchTerm$
             .pipe(
                 takeUntil( this._unsubscribeAll ),
+                skip( 1 ),
                 tap( ( searchTerm: string ) => {
                     console.log('Search: ' + searchTerm );
-                    this.clientsService.loadItems( searchTerm );
+                    this.searchTerm = searchTerm;
+                    this.clientsService.loadBatch( searchTerm, true );
                 } )
             ).subscribe();
 
@@ -50,6 +58,9 @@ export class ClientsListComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
+    nextBatch(): void {
+        this.clientsService.loadBatch( this.searchTerm );
+    }
     /**
      * Open a client record.
      * @param item IClient
@@ -80,42 +91,39 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             } );
     }
 
-    /**
-     * Load previous batch of clients.
-     */
-    previous(): void {
-        this.clientsService.prevPage();
+    dummyData(): void {
+        for ( let i = 1; i <= this.clientsService.getMaxPerPage(); i++ ) {
+            const item: IClient = {
+                id: '',
+                address: 'Dummy A ',
+                customerNumber: 'Dummy CN ',
+                feedingRoutine: 'Dunny fr ',
+                health: 'Dummy h ',
+                name: ' Dummy n ',
+                other: 'Dummy o ',
+                petName: 'Dummy'
+            };
+            item.address += i;
+            item.customerNumber += i;
+            item.feedingRoutine += i;
+            item.health += i;
+            item.name += i;
+            item.other += i;
+            this.clientsService.addItem( item );
+        }
+        alert('Dummies created.');
     }
 
-    /**
-     * Load next batch of clients.
-     */
-    next(): void {
-        this.clientsService.nextPage();
-    }
-
-    /**
-     * Get if prev is disbaled.
-     * @return boolean
-     */
-    disable_prev(): boolean {
-        return this.clientsService.disable_prev;
-    }
-
-    /**
-     * Get pagination click count.
-     * @return number
-     */
-    pagination_clicked_count(): number {
-        return this.clientsService.pagination_clicked_count;
-    }
-
-    /**
-     * Get if next is disbaled.
-     * @return boolean
-     */
-    disable_next(): boolean {
-        return this.clientsService.disable_next;
+    dummyDataDelete(): void {
+        this.clientsService.getDummyData()
+            .pipe(
+                tap( ( items: IClient[] ) => {
+                    console.log(' Deleting dummy count: ' + items.length );
+                    items.forEach( ( item: IClient, index ) => {
+                        this.clientsService.deleteDummy( item );
+                    } );
+                } )
+            ).subscribe();
     }
 
 }

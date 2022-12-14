@@ -6,15 +6,14 @@
         </a>
         <div class="d-flex">
             <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
                 <input
                         type="search"
                         class="form-control"
                         placeholder="Pet name..."
                         [(ngModel)]="searchTerm"
                         [ngModelOptions]="{standalone: true}"
-                        (keyup)="startSearching()"
                         (search)="resetSearch()">
+                <span class="input-group-text green" (click)="resetSearch()"><i class="bi bi-search"></i></span>
             </div>
         </div>
     </div>
