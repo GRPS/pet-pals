@@ -16,7 +16,7 @@ export class ClientsService {
      * Batch number to load.
      * @private
      */
-    private _maxPerPage = 5;
+    private _maxPerPage = 50;
 
     /**
      * Storage for all clients fetched from Firebase.
