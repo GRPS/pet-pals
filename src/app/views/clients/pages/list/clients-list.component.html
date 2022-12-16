@@ -31,7 +31,7 @@
             </table>
         </div>
 
-        <div class="nextBatch mt-4 mb-4" *ngIf="searchTerm==='' && items.length != clientCount else allLoaded">
+        <div class="nextBatch mt-4 mb-4" *ngIf="searchTerm==='' && items.length < clientCount else allLoaded">
             <button type="button" class="btn btn-secondary btn-sm" (click)="nextBatch()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load next batch...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
         </div>
 

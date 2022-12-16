@@ -101,6 +101,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
      * @return void.
      */
     dummyData(): void {
+        const currentClientCount: number = this.clientsService.getClientCountLocally();
         for ( let i = 1; i <= this.clientsService.getMaxPerPage(); i++ ) {
             const item: IClient = {
                 id: '',
@@ -118,9 +119,9 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             item.health += i;
             item.name += i;
             item.other += i;
-            this.clientsService.addItem( item );
+            this.clientsService.addItem( item, false );
+            this.clientsService.setClientCountLocally( currentClientCount + this.clientsService.getMaxPerPage() );
         }
-        alert('Please refresh page.');
     }
 
     /**
@@ -135,7 +136,9 @@ export class ClientsListComponent implements OnInit, OnDestroy {
                     items.forEach( ( item: IClient, index ) => {
                         this.clientsService.deleteDummy( item );
                     } );
-                    alert('Please refresh page.');
+                    const newItems: IClient[] = this.clientsService.getClients().filter( ( item: IClient ) => item.petName != 'Dummy' );
+                    this.clientsService.setClients( newItems );
+                    this.clientsService.updateClientCountInFirebase( this.clientsService.getClientCountLocally() - newItems.length, false );
                 } )
             ).subscribe();
     }

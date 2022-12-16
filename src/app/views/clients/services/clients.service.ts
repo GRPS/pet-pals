@@ -17,7 +17,7 @@ export class ClientsService {
      * Batch number to load.
      * @private
      */
-    private _maxPerPage = 50;
+    private _maxPerPage = 5;
 
     /**
      * Storage for all clients fetched from Firebase.
@@ -95,13 +95,15 @@ export class ClientsService {
      * @param item IClient
      * @return result of adding an item observable boolean
      */
-    addItem( item: IClient ): Observable<boolean> {
+    addItem( item: IClient, updateFireBaseCount: boolean = true ): Observable<boolean> {
         const cdx = this;
         item.id = this.store.createId();
         return from(
             this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).set( item )
                 .then( function() {
-                    cdx.updateClientCountInFirebase();
+                    if( updateFireBaseCount ) {
+                        cdx.updateClientCountInFirebase();
+                    }
                     const clients: IClient[] = cdx._itemsSubject.value;
                     clients.push( item );
                     cdx._itemsSubject.next( clients.sort(( clientA: IClient, clientB: IClient ) => clientA.customerNumber > clientB.customerNumber ? 1 : -1 ) );
@@ -149,7 +151,7 @@ export class ClientsService {
                     if ( result ) {
                         return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
                             .then( function( success ) {
-                                cdx.updateClientCountInFirebase( false );
+                                cdx.updateClientCountInFirebase( 1, false );
                                 const a = cdx._itemsSubject.value;
                                 const b = a.filter( ( client: IClient ) => client.id != item.id );
 
@@ -199,12 +201,13 @@ export class ClientsService {
 
     /**
      * Update client count in Firebase
+     * @param value
      * @param isIncrement boolean should we increment or decrement the count.
      * @param isIncrement
      */
-    updateClientCountInFirebase( isIncrement: boolean = true ): void {
+    updateClientCountInFirebase( value: number = 1, isIncrement: boolean = true ): void {
         const cdx = this;
-        const newCountClient: string = isIncrement ? ( +this._countClientSubject.value + 1 ).toString() : ( +this._countClientSubject.value - 1 ).toString();
+        const newCountClient: string = isIncrement ? ( +this._countClientSubject.value + value ).toString() : ( +this._countClientSubject.value - value ).toString();
         this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).set( { counter: newCountClient } )
             .then( function( success ) {
                 cdx._countClientSubject.next( newCountClient );
@@ -221,6 +224,21 @@ export class ClientsService {
 
     areClientsLoaded(): boolean {
         return this._countClientSubject.value.length > 0;
+    }
+
+    getClientCountLocally(): number {
+        return +this._countClientSubject.value;
+    }
+    setClientCountLocally( value: number ): void {
+        this._countClientSubject.next( value.toString() );
+    }
+
+    setClients( items: IClient[] ): void {
+        this._itemsSubject.next( items );
+    }
+
+    getClients(): IClient[] {
+        return this._itemsSubject.value;
     }
 
     /**
@@ -248,7 +266,6 @@ export class ClientsService {
         const cdx = this;
         return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
             .then( function( success ) {
-                cdx.updateClientCountInFirebase( false );
                 return true;
             } )
             .catch( function( error ) {
