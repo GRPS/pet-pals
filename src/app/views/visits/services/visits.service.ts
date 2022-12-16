@@ -5,6 +5,7 @@ import { map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IVisit } from '../models/entities/visits';
 import { VISITS } from '../enums/visits.enum';
+import { IClient } from '../../clients/models/entities/client';
 
 @Injectable()
 export class VisitsService {
@@ -68,14 +69,18 @@ export class VisitsService {
      * @return result of adding an item observable boolean
      */
     addItem( item: IVisit ): Observable<boolean> {
-        const newId: string = this.store.createId();
-        return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( newId ).set( { ... item, id: newId } )
+        const cdx = this;
+        item.id = this.store.createId();
+        return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).set( item )
             .then( function( success ) {
-                return true;
+                const visits: IVisit[] = cdx._itemsSubject.value;
+                visits.push( item );
+                cdx._itemsSubject.next( visits.sort(( visitA: IVisit, visitB: IVisit ) => visitA.dt < visitB.dt ? 1 : -1 ) );
+                return Promise.resolve( true );
             } )
             .catch( function( error ) {
                 console.log( 'Visit service add item error', error );
-                return false;
+                return Promise.reject( false );
             } )
         );
     }
@@ -86,8 +91,13 @@ export class VisitsService {
      * @return result of updating or adding an item observable boolean
      */
     updateItem( item: IVisit ): Observable<boolean> {
+        const cdx = this;
         return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).update( item )
             .then( function( success ) {
+                const visits: IVisit[] = cdx._itemsSubject.value;
+                const index: number = cdx._itemsSubject.value.findIndex( ( client: IVisit ) => client.id === item.id );
+                visits[ index ] = item;
+                cdx._itemsSubject.next( visits.sort(( visitA: IVisit, visitB: IVisit ) => visitA.dt > visitB.dt ? 1 : -1 ) );
                 return true;
             } )
             .catch( function( error ) {
@@ -103,8 +113,10 @@ export class VisitsService {
      * @return result of deleting an item observable boolean
      */
     deleteItem( item: IVisit ): Observable<boolean> {
+        const cdx = this;
         return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).delete()
             .then( function( success ) {
+                cdx._itemsSubject.next( cdx._itemsSubject.value.filter( ( visit: IVisit ) => visit.id != item.id ) );
                 return true;
             } )
             .catch( function( error ) {

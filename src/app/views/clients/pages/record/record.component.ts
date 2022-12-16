@@ -9,6 +9,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { CanComponentDeactivate } from '../../../../shared/directives/can-deactivate-guard.service';
 import { CLIENTS } from '../../enums/clients.enum';
 import { VisitsService } from '../../../visits/services/visits.service';
+import { VISITS } from '../../../visits/enums/visits.enum';
 
 @Component( {
     selector: 'app-record',
@@ -146,15 +147,19 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
      * @return void
      */
     delete(): void {
-        this._alertService.areYouSure()
+        this._alertService.areYouSure( 'Delete Client?', 'Customer Number ' + this.form.get( CLIENTS.CUSTOMERNUMBER ).value + ' (' + this.form.get( CLIENTS.PETNAME ).value + ')' )
             .then( ( response: boolean ) => {
                 if ( response ) {
                     this._clientsService.deleteItem( this.form.value )
                         .pipe(
                             take( 1 ),
-                            tap( () => {
-                                this.back();
-                                this._alertService.toast( 'Item deleted!' );
+                            tap( ( result: boolean ) => {
+                                if ( result ) {
+                                    this.back();
+                                    this._alertService.toast( 'Item deleted!' );
+                                } else {
+                                    this._alertService.toast( 'Error deleting client amd it\'s visit logs.' );
+                                }
                             } )
                         ).subscribe();
                 }

@@ -8,6 +8,7 @@ import { VisitsService } from '../../visits/services/visits.service';
 import { IClientCount } from '../../../shared/models/entities/setting';
 import { SearchService } from '../../../shared/service/search.service';
 import { CLIENTS } from '../enums/clients.enum';
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Injectable()
 export class ClientsService {
@@ -71,6 +72,7 @@ export class ClientsService {
             .pipe(
                 take( 1 ),
                 tap( response => {
+                    console.log('loadBatch');
                     if ( ! response.length ) {
                         console.log( 'No client Data Available' );
                         return false;
@@ -94,21 +96,22 @@ export class ClientsService {
      * @return result of adding an item observable boolean
      */
     addItem( item: IClient ): Observable<boolean> {
-        const newId: string = this.store.createId();
-        // return from(
-        //     this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( newId ).set( { ... item, id: newId } )
-        //         .then( function() {
-        //             this.updateClientCountInFirebase();
-        //             return Promise.resolve( true );
-        //         } )
-        //         .catch( function( error ) {
-        //             console.log( 'Client service add item error', error );
-        //             return Promise.reject( false );
-        //         } )
-        // );
-        this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( newId ).set( { ... item, id: newId } );
-        this.updateClientCountInFirebase();
-        return of( true );
+        const cdx = this;
+        item.id = this.store.createId();
+        return from(
+            this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).set( item )
+                .then( function() {
+                    cdx.updateClientCountInFirebase();
+                    const clients: IClient[] = cdx._itemsSubject.value;
+                    clients.push( item );
+                    cdx._itemsSubject.next( clients.sort(( clientA: IClient, clientB: IClient ) => clientA.customerNumber > clientB.customerNumber ? 1 : -1 ) );
+                    return Promise.resolve( true );
+                } )
+                .catch( function( error ) {
+                    console.log( 'Client service add item error', error );
+                    return Promise.reject( false );
+                } )
+        );
     }
 
     /**
@@ -117,8 +120,13 @@ export class ClientsService {
      * @return result of updating or adding an item observable boolean
      */
     updateItem( item: IClient ): Observable<boolean> {
+        const cdx = this;
         return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).update( item )
             .then( function( success ) {
+                const clients: IClient[] = cdx._itemsSubject.value;
+                const index: number = cdx._itemsSubject.value.findIndex( ( client: IClient ) => client.id === item.id );
+                clients[ index ] = item;
+                cdx._itemsSubject.next( clients.sort(( clientA: IClient, clientB: IClient ) => clientA.customerNumber > clientB.customerNumber ? 1 : -1 ) );
                 return true;
             } )
             .catch( function( error ) {
@@ -134,14 +142,18 @@ export class ClientsService {
      * @return result of deleting an item observable boolean
      */
     deleteItem( item: IClient ): Observable<boolean> {
-
+        const cdx = this;
         return this._visitService.deleteAllClientVisits( item.id )
             .pipe(
                 tap( ( result: boolean ) => {
                     if ( result ) {
                         return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
                             .then( function( success ) {
-                                this.updateClientCountInFirebase( false );
+                                cdx.updateClientCountInFirebase( false );
+                                const a = cdx._itemsSubject.value;
+                                const b = a.filter( ( client: IClient ) => client.id != item.id );
+
+                                cdx._itemsSubject.next( cdx._itemsSubject.value.filter( ( client: IClient ) => client.id != item.id ) );
                                 return true;
                             } )
                             .catch( function( error ) {
@@ -191,17 +203,16 @@ export class ClientsService {
      * @param isIncrement
      */
     updateClientCountInFirebase( isIncrement: boolean = true ): void {
+        const cdx = this;
         const newCountClient: string = isIncrement ? ( +this._countClientSubject.value + 1 ).toString() : ( +this._countClientSubject.value - 1 ).toString();
-        // this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).set( { counter: newCountClient } )
-        //     .then( function( success ) {
-        //         this._countClientSubject.next( newCountClient );
-        //         return true;
-        //     } )
-        //     .catch( function( error ) {
-        //         return false;
-        //     } );
-        this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).set( { counter: newCountClient } );
-        this._countClientSubject.next( newCountClient );
+        this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).set( { counter: newCountClient } )
+            .then( function( success ) {
+                cdx._countClientSubject.next( newCountClient );
+                return true;
+            } )
+            .catch( function( error ) {
+                return false;
+            } );
     }
 
     getMaxPerPage(): number {
@@ -228,19 +239,22 @@ export class ClientsService {
             );
     }
 
+    /**
+     * Delete all dumy data from Firebase.
+     * @return observable booelan.
+     * @param item
+     */
     deleteDummy( item: IClient ): Observable<boolean> {
-        // return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
-        //     .then( function( success ) {
-        //         this.updateClientCountInFirebase( false );
-        //         return true;
-        //     } )
-        //     .catch( function( error ) {
-        //         return false;
-        //     } )
-        // );
-        this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete();
-        this.updateClientCountInFirebase( false );
-        return of( true );
+        const cdx = this;
+        return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
+            .then( function( success ) {
+                cdx.updateClientCountInFirebase( false );
+                return true;
+            } )
+            .catch( function( error ) {
+                return false;
+            } )
+        );
     }
 
 }

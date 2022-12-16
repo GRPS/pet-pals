@@ -143,7 +143,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
      * @return void
      */
     delete(): void {
-        this._alertService.areYouSure()
+        this._alertService.areYouSure( 'Delete Visit?',  this.form.get( VISITS.NAME ).value + ' visit on ' + this.form.get( VISITS.DT ).value )
             .then( ( response: boolean ) => {
                 if ( response ) {
                     this._visitsService.deleteItem( this.form.value )

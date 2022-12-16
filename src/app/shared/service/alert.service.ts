@@ -13,7 +13,7 @@ export class AlertService {
      * Are uou sure prompt.
      * @return
      */
-    areYouSure( title: string = 'Are you sure?', text: string = 'You won\'t be able to revert this!' ): Promise<boolean> {
+    areYouSure( title: string = 'Delete Record', html: string = 'Are you sure?' ): Promise<boolean> {
         return Swal.mixin( {
             customClass: {
                 confirmButton: 'btn btn-success',
@@ -22,7 +22,7 @@ export class AlertService {
             buttonsStyling: false
         } ).fire( {
             title,
-            text,
+            html,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Yes',
