@@ -4,5 +4,5 @@ export interface ISetting {
 }
 
 export interface IClientCount {
-    counter: string;
+    counter: number;
 }

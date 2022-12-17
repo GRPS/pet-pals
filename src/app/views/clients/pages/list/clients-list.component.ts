@@ -119,8 +119,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             item.health += i;
             item.name += i;
             item.other += i;
-            this.clientsService.addItem( item, false );
-            this.clientsService.setClientCountLocally( currentClientCount + this.clientsService.getMaxPerPage() );
+            this.clientsService.addItem( item, i === this.clientsService.getMaxPerPage() );
         }
     }
 
@@ -138,7 +137,6 @@ export class ClientsListComponent implements OnInit, OnDestroy {
                     } );
                     const newItems: IClient[] = this.clientsService.getClients().filter( ( item: IClient ) => item.petName != 'Dummy' );
                     this.clientsService.setClients( newItems );
-                    this.clientsService.updateClientCountInFirebase( this.clientsService.getClientCountLocally() - newItems.length, false );
                 } )
             ).subscribe();
     }

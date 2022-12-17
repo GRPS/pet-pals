@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, CollectionReference, Query } from '@angular/fire/firestore';
+import { AngularFirestore, Query } from '@angular/fire/firestore';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { catchError, map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
@@ -8,7 +8,6 @@ import { VisitsService } from '../../visits/services/visits.service';
 import { IClientCount } from '../../../shared/models/entities/setting';
 import { SearchService } from '../../../shared/service/search.service';
 import { CLIENTS } from '../enums/clients.enum';
-import { async } from 'rxjs/internal/scheduler/async';
 
 @Injectable()
 export class ClientsService {
@@ -34,8 +33,8 @@ export class ClientsService {
      * Keep count of clients.
      * @private
      */
-    private _countClientSubject: BehaviorSubject<string> = new BehaviorSubject<string>( '' );
-    countClient$: Observable<string> = this._countClientSubject.asObservable();
+    private _countClientSubject: BehaviorSubject<number> = new BehaviorSubject<number>( 0 );
+    // countClient$: Observable<number> = this._countClientSubject.asObservable();
 
     constructor(
         private store: AngularFirestore,
@@ -72,7 +71,7 @@ export class ClientsService {
             .pipe(
                 take( 1 ),
                 tap( response => {
-                    console.log('loadBatch');
+                    console.log( 'loadBatch' );
                     if ( ! response.length ) {
                         console.log( 'No client Data Available' );
                         return false;
@@ -93,20 +92,22 @@ export class ClientsService {
     /**
      * Add a client item to Firebase.
      * @param item IClient
+     * @param doSort: boolean
      * @return result of adding an item observable boolean
      */
-    addItem( item: IClient, updateFireBaseCount: boolean = true ): Observable<boolean> {
+    addItem( item: IClient, doSort: boolean = true ): Observable<boolean> {
         const cdx = this;
         item.id = this.store.createId();
         return from(
             this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).set( item )
                 .then( function() {
-                    if( updateFireBaseCount ) {
-                        cdx.updateClientCountInFirebase();
-                    }
-                    const clients: IClient[] = cdx._itemsSubject.value;
+                    cdx._incrementClientCount();
+                    let clients: IClient[] = cdx._itemsSubject.value;
                     clients.push( item );
-                    cdx._itemsSubject.next( clients.sort(( clientA: IClient, clientB: IClient ) => clientA.customerNumber > clientB.customerNumber ? 1 : -1 ) );
+                    if ( doSort ) {
+                        clients = clients.sort( ( clientA: IClient, clientB: IClient ) => clientA.customerNumber > clientB.customerNumber ? 1 : -1 );
+                    }
+                    cdx._itemsSubject.next( clients );
                     return Promise.resolve( true );
                 } )
                 .catch( function( error ) {
@@ -128,7 +129,7 @@ export class ClientsService {
                 const clients: IClient[] = cdx._itemsSubject.value;
                 const index: number = cdx._itemsSubject.value.findIndex( ( client: IClient ) => client.id === item.id );
                 clients[ index ] = item;
-                cdx._itemsSubject.next( clients.sort(( clientA: IClient, clientB: IClient ) => clientA.customerNumber > clientB.customerNumber ? 1 : -1 ) );
+                cdx._itemsSubject.next( clients.sort( ( clientA: IClient, clientB: IClient ) => clientA.customerNumber > clientB.customerNumber ? 1 : -1 ) );
                 return true;
             } )
             .catch( function( error ) {
@@ -151,7 +152,7 @@ export class ClientsService {
                     if ( result ) {
                         return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
                             .then( function( success ) {
-                                cdx.updateClientCountInFirebase( 1, false );
+                                cdx._decrementClientCount();
                                 const a = cdx._itemsSubject.value;
                                 const b = a.filter( ( client: IClient ) => client.id != item.id );
 
@@ -185,6 +186,48 @@ export class ClientsService {
     }
 
     /**
+     * Get max clients per page.
+     * @return number
+     */
+    getMaxPerPage(): number {
+        return this._maxPerPage;
+    }
+
+    /**
+     * Get if clients have been loaded.
+     * @return boolean
+     */
+    areClientsLoaded(): boolean {
+        return this._itemsSubject.value.length > 0;
+    }
+
+    /**
+     * Get local client count.
+     * @return number
+     */
+    getClientCountLocally(): number {
+        return +this._countClientSubject.value;
+    }
+
+    /**
+     * Set clients and then the client count.
+     * @param items IClient
+     * @return void
+     */
+    setClients( items: IClient[] ): void {
+        this._itemsSubject.next( items );
+        this._setClientCount( items.length );
+    }
+
+    /**
+     * Get local clients.
+     * @return items IClient
+     */
+    getClients(): IClient[] {
+        return this._itemsSubject.value;
+    }
+
+    /**
      * Get current client count from Firebase.
      * @return void
      * @private
@@ -205,40 +248,57 @@ export class ClientsService {
      * @param isIncrement boolean should we increment or decrement the count.
      * @param isIncrement
      */
-    updateClientCountInFirebase( value: number = 1, isIncrement: boolean = true ): void {
-        const cdx = this;
-        const newCountClient: string = isIncrement ? ( +this._countClientSubject.value + value ).toString() : ( +this._countClientSubject.value - value ).toString();
-        this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).set( { counter: newCountClient } )
-            .then( function( success ) {
-                cdx._countClientSubject.next( newCountClient );
-                return true;
-            } )
-            .catch( function( error ) {
-                return false;
-            } );
+    private _updateClientCountInFirebase( value: number ): Observable<boolean> {
+        return from(
+            this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).set( { counter: value } )
+                .then( function( success ) {
+                    return Promise.resolve( true );
+                } )
+                .catch( function( error ) {
+                    return Promise.reject( false );
+                } )
+        );
     }
 
-    getMaxPerPage(): number {
-        return this._maxPerPage;
+    /**
+     * Increment client count then update Firebase and local counts.
+     * @param amount number amount to add on to current client count.
+     * @return void
+     */
+    private _incrementClientCount( amount: number = 1 ): void {
+        const newValue: number = this.getClientCountLocally() + amount;
+        this._setClientCountLocally( newValue );
+        this._updateClientCountInFirebase( newValue );
     }
 
-    areClientsLoaded(): boolean {
-        return this._countClientSubject.value.length > 0;
+    /**
+     * Decrement client count then update Firebase and local counts.
+     * @param amount number amount to take off from the current client count.
+     * @return void
+     */
+    private _decrementClientCount( amount: number = 1 ): void {
+        const newValue: number = this.getClientCountLocally() - amount;
+        this._setClientCountLocally( newValue );
+        this._updateClientCountInFirebase( newValue );
     }
 
-    getClientCountLocally(): number {
-        return +this._countClientSubject.value;
-    }
-    setClientCountLocally( value: number ): void {
-        this._countClientSubject.next( value.toString() );
+    /**
+     * Set clients and the counts.
+     * @param value
+     * @private
+     */
+    private _setClientCount( value: number ): void {
+        this._setClientCountLocally( value );
+        this._updateClientCountInFirebase( value );
     }
 
-    setClients( items: IClient[] ): void {
-        this._itemsSubject.next( items );
-    }
-
-    getClients(): IClient[] {
-        return this._itemsSubject.value;
+    /**
+     * Set local client count.
+     * @param value
+     * @return void
+     */
+    private _setClientCountLocally( value: number ): void {
+        this._countClientSubject.next( value );
     }
 
     /**
