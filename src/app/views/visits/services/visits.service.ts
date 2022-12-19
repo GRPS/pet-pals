@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, Query } from '@angular/fire/firestore';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
@@ -32,9 +32,14 @@ export class VisitsService {
      * @return void.
      */
     loadItems( clientId: string, searchTerm: string = '' ) {
-        this.store.collection( CollectionEnum.VISITS, ref => ref
-            .where( VISITS.CLIENTID, '==', clientId )
-            .orderBy( VISITS.DT, 'desc' )
+        this.store.collection( CollectionEnum.VISITS, ref => {
+                let query: Query = ref;
+                if ( clientId != VISITS.ALL ) {
+                    query = query.where( VISITS.CLIENTID, '==', clientId );
+                }
+                query = query.orderBy( VISITS.DT, 'desc' );
+                return query;
+            }
         ).get()
             .pipe(
                 take( 1 ),
@@ -154,7 +159,7 @@ export class VisitsService {
      * @param response boolean
      */
     setIsAllVisits( response: boolean ): void {
-        this. _isAllVisits = response;
+        this._isAllVisits = response;
     }
 
     /**

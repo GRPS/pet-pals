@@ -37,7 +37,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
             .pipe(
                 tap( ( params: ParamMap ) => {
                     this.paramClientId = params.get( VISITS.CLIENTID );
-                    this.visitsService.setIsAllVisits( this.paramClientId === 'all' );
+                    this.visitsService.setIsAllVisits( this.paramClientId === VISITS.ALL );
                     this.visitsService.loadItems( this.paramClientId, null );
                 } )
             ).subscribe();

@@ -5,5 +5,8 @@ export enum VISITS {
     DT = 'dt',
     DTDATE = 'dtDate',
     DTMONTH = 'dtMonth',
-    DTYEAR = 'dtYear'
+    DTYEAR = 'dtYear',
+
+    // Common
+    ALL = 'all'
 }
