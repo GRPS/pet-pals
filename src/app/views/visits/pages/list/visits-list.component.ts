@@ -37,6 +37,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
             .pipe(
                 tap( ( params: ParamMap ) => {
                     this.paramClientId = params.get( VISITS.CLIENTID );
+                    this.visitsService.setIsAllVisits( this.paramClientId === 'all' );
                     this.visitsService.loadItems( this.paramClientId, null );
                 } )
             ).subscribe();
@@ -82,7 +83,8 @@ export class VisitsListComponent implements OnInit, OnDestroy {
      * @return void
      */
     back(): void {
-        this._router.navigate( [ '/clients/' + this.paramClientId ], { relativeTo: this._route } )
+        const url: string = this.visitsService.getIsAllVisits() ? '/clients' : '/clients/' + this.paramClientId;
+        this._router.navigate( [ url ] )
             .then( ( succeeded: boolean ) => {
                 this.visitsService.reset();
             } )

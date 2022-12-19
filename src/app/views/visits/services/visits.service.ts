@@ -11,6 +11,12 @@ import { IClient } from '../../clients/models/entities/client';
 export class VisitsService {
 
     /**
+     * Show visits just for a client or all visits.
+     * @private
+     */
+    private _isAllVisits: boolean = false;
+
+    /**
      * Storage for all visits from a specific client fetched from Firebase.
      */
     private _itemsSubject: BehaviorSubject<IVisit[]> = new BehaviorSubject<IVisit[]>( [] );
@@ -51,15 +57,15 @@ export class VisitsService {
             .pipe(
                 take( 1 ),
                 map( res => {
-                    console.log('Deleting visits for client: ' + clientId );
+                    console.log( 'Deleting visits for client: ' + clientId );
                     res.forEach( doc => {
                         doc.ref.delete();
                     } );
-                    return true ;
+                    return true;
                 }, error => {
                     console.log( 'Visit service delete all for client error', error );
                     return false;
-                }  )
+                } )
             );
     }
 
@@ -75,7 +81,7 @@ export class VisitsService {
             .then( function( success ) {
                 const visits: IVisit[] = cdx._itemsSubject.value;
                 visits.push( item );
-                cdx._itemsSubject.next( visits.sort(( visitA: IVisit, visitB: IVisit ) => visitA.dt < visitB.dt ? 1 : -1 ) );
+                cdx._itemsSubject.next( visits.sort( ( visitA: IVisit, visitB: IVisit ) => visitA.dt < visitB.dt ? 1 : -1 ) );
                 return Promise.resolve( true );
             } )
             .catch( function( error ) {
@@ -97,7 +103,7 @@ export class VisitsService {
                 const visits: IVisit[] = cdx._itemsSubject.value;
                 const index: number = cdx._itemsSubject.value.findIndex( ( client: IVisit ) => client.id === item.id );
                 visits[ index ] = item;
-                cdx._itemsSubject.next( visits.sort(( visitA: IVisit, visitB: IVisit ) => visitA.dt > visitB.dt ? 1 : -1 ) );
+                cdx._itemsSubject.next( visits.sort( ( visitA: IVisit, visitB: IVisit ) => visitA.dt > visitB.dt ? 1 : -1 ) );
                 return true;
             } )
             .catch( function( error ) {
@@ -141,6 +147,21 @@ export class VisitsService {
      */
     reset(): void {
         this._itemsSubject.next( [] );
+    }
+
+    /**
+     * Set if we are showing client visits or all visits.
+     * @param response boolean
+     */
+    setIsAllVisits( response: boolean ): void {
+        this. _isAllVisits = response;
+    }
+
+    /**
+     * Get if we are showing client visits or all visits.
+     */
+    getIsAllVisits(): boolean {
+        return this._isAllVisits;
     }
 
 }
