@@ -166,7 +166,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
         setTimeout( () => {
             const url: string = this._visitsService.getIsAllVisits() ? '/visits/list/all' : '/visits/list/' + this.paramClientId;
             this._router.navigate( [ url ] )
-                .then( ( succeeded: boolean ) => {
+                .then( () => {
                 } )
                 .catch( error => {
                     console.log( 'Navigate from visit record back to client\'s visit list', error );

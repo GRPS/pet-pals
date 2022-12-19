@@ -32,25 +32,15 @@ export class VisitsListComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
 
-        // Are we adding a new record or loading an existing?
+        // Load visits.
         this._route.paramMap
             .pipe(
                 tap( ( params: ParamMap ) => {
                     this.paramClientId = params.get( VISITS.CLIENTID );
                     this.visitsService.setIsAllVisits( this.paramClientId === VISITS.ALL );
-                    this.visitsService.loadItems( this.paramClientId, null );
+                    this.visitsService.loadItems( this.paramClientId );
                 } )
             ).subscribe();
-
-        // Apply search term to any property within the loaded client items.
-        // this._searchService.searchTerm$
-        //     .pipe(
-        //         takeUntil( this._unsubscribeAll ),
-        //         tap( ( searchTerm: string ) => {
-        //             console.log('Search: ' + searchTerm );
-        //             // this.visitsService.loadItems( searchTerm );
-        //         } )
-        //     ).subscribe();
 
     }
 
@@ -71,7 +61,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
      */
     open( item: IVisit, event: MouseEvent ): void {
         this._router.navigate( [ '../../' + item.id ], { relativeTo: this._route } )
-            .then( ( succeeded: boolean ) => {
+            .then( () => {
             } )
             .catch( error => {
                 console.log('Navigate from visit list to open existing visit', error);
@@ -85,7 +75,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
     back(): void {
         const url: string = this.visitsService.getIsAllVisits() ? '/clients' : '/clients/' + this.paramClientId;
         this._router.navigate( [ url ] )
-            .then( ( succeeded: boolean ) => {
+            .then( () => {
                 this.visitsService.reset();
             } )
             .catch( error => {
@@ -95,13 +85,11 @@ export class VisitsListComponent implements OnInit, OnDestroy {
 
     /**
      * Open a visit record.
-     * @param item IVisit
-     * @param event MouseEvent
      * @return void
      */
     add(): void {
         this._router.navigate( [ '../../add/' + this.paramClientId ], { relativeTo: this._route } )
-            .then( ( succeeded: boolean ) => {
+            .then( () => {
             } )
             .catch( error => {
                 console.log('Navigate from visit list to new visit error', error);

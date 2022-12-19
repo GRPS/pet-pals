@@ -78,8 +78,8 @@ export class ClientsService {
                     }
                     this.lastInResponse = response[ response.length - 1 ].payload.doc;
 
-                    let tableData: IClient[] = this._itemsSubject.value;
-                    for ( let item of response ) {
+                    const tableData: IClient[] = this._itemsSubject.value;
+                    for ( const item of response ) {
                         tableData.push( item.payload.doc.data() as IClient );
                     }
                     this._itemsSubject.next( tableData );
@@ -100,7 +100,7 @@ export class ClientsService {
         item.id = this.store.createId();
         return from(
             this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).set( item )
-                .then( function() {
+                .then( () => {
                     cdx._incrementClientCount();
                     let clients: IClient[] = cdx._itemsSubject.value;
                     clients.push( item );
@@ -110,7 +110,7 @@ export class ClientsService {
                     cdx._itemsSubject.next( clients );
                     return Promise.resolve( true );
                 } )
-                .catch( function( error ) {
+                .catch( ( error ) => {
                     console.log( 'Client service add item error', error );
                     return Promise.reject( false );
                 } )
@@ -125,14 +125,14 @@ export class ClientsService {
     updateItem( item: IClient ): Observable<boolean> {
         const cdx = this;
         return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).update( item )
-            .then( function( success ) {
+            .then( () => {
                 const clients: IClient[] = cdx._itemsSubject.value;
                 const index: number = cdx._itemsSubject.value.findIndex( ( client: IClient ) => client.id === item.id );
                 clients[ index ] = item;
                 cdx._itemsSubject.next( clients.sort( ( clientA: IClient, clientB: IClient ) => clientA.customerNumber > clientB.customerNumber ? 1 : -1 ) );
                 return true;
             } )
-            .catch( function( error ) {
+            .catch( ( error ) => {
                 console.log( 'Client service update item error', error );
                 return false;
             } )
@@ -151,21 +151,19 @@ export class ClientsService {
                 tap( ( result: boolean ) => {
                     if ( result ) {
                         return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
-                            .then( function( success ) {
+                            .then( () => {
                                 cdx._decrementClientCount();
-                                const a = cdx._itemsSubject.value;
-                                const b = a.filter( ( client: IClient ) => client.id != item.id );
-
-                                cdx._itemsSubject.next( cdx._itemsSubject.value.filter( ( client: IClient ) => client.id != item.id ) );
+                                cdx._itemsSubject.next( cdx._itemsSubject.value.filter( ( client: IClient ) => client.id !== item.id ) );
                                 return true;
                             } )
-                            .catch( function( error ) {
+                            .catch( ( error ) => {
+                                console.log( 'Client service delete item error', error );
                                 return false;
                             } )
                         );
                     } else {
-                        return false;
                         console.log( 'Client service deleteItem cannot delete visits error' );
+                        return false;
                     }
                 } ),
                 catchError( error => {
@@ -245,16 +243,15 @@ export class ClientsService {
     /**
      * Update client count in Firebase
      * @param value
-     * @param isIncrement boolean should we increment or decrement the count.
-     * @param isIncrement
      */
     private _updateClientCountInFirebase( value: number ): Observable<boolean> {
         return from(
             this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).set( { counter: value } )
-                .then( function( success ) {
+                .then( () => {
                     return Promise.resolve( true );
                 } )
-                .catch( function( error ) {
+                .catch( ( error ) => {
+                    console.log( 'Client service update client count error', error );
                     return Promise.reject( false );
                 } )
         );
@@ -318,17 +315,17 @@ export class ClientsService {
     }
 
     /**
-     * Delete all dumy data from Firebase.
-     * @return observable booelan.
+     * Delete all dummy data from Firebase.
+     * @return observable boolean.
      * @param item
      */
     deleteDummy( item: IClient ): Observable<boolean> {
-        const cdx = this;
         return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.id ).delete()
-            .then( function( success ) {
+            .then( () => {
                 return true;
             } )
-            .catch( function( error ) {
+            .catch( ( error ) => {
+                console.log( 'Client service delete dummy error', error );
                 return false;
             } )
         );

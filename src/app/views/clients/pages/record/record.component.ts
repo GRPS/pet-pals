@@ -5,11 +5,10 @@ import { AlertService } from '../../../../shared/service/alert.service';
 import { IClient } from '../../models/entities/client';
 import { take, takeUntil, tap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { CanComponentDeactivate } from '../../../../shared/directives/can-deactivate-guard.service';
 import { CLIENTS } from '../../enums/clients.enum';
 import { VisitsService } from '../../../visits/services/visits.service';
-import { VISITS } from '../../../visits/enums/visits.enum';
 
 @Component( {
     selector: 'app-record',
@@ -23,7 +22,6 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
     paramId: string;
     isNew: boolean = false;
     isEditMode: boolean = false;
-    subscription: Subscription;
 
     /**
      * Store all subscriptions.
@@ -81,9 +79,10 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
 
     visits(): void {
         this._router.navigate( [ '/visits/list/' + this.paramId ], { relativeTo: this._route } )
-            .then( ( succeeded: boolean ) => {
+            .then( () => {
             } )
             .catch( error => {
+                console.log( 'Client service go to all visits error', error );
             } );
     }
 
@@ -173,7 +172,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
     back(): void {
         setTimeout( () => {
             this._router.navigate( [ '../list' ], { relativeTo: this._route } )
-                .then( ( succeeded: boolean ) => {
+                .then( () => {
                 } )
                 .catch( error => {
                     console.log( 'Navigate from client record back to client list', error );

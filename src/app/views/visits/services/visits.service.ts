@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, Query } from '@angular/fire/firestore';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IVisit } from '../models/entities/visits';
 import { VISITS } from '../enums/visits.enum';
-import { IClient } from '../../clients/models/entities/client';
 
 @Injectable()
 export class VisitsService {
@@ -28,13 +27,13 @@ export class VisitsService {
     }
 
     /**
-     * Load all items from Firebase.
+     * Load items for specific client or all items from Firebase.
      * @return void.
      */
-    loadItems( clientId: string, searchTerm: string = '' ) {
+    loadItems( clientId: string ) {
         this.store.collection( CollectionEnum.VISITS, ref => {
                 let query: Query = ref;
-                if ( clientId != VISITS.ALL ) {
+                if ( clientId !== VISITS.ALL ) {
                     query = query.where( VISITS.CLIENTID, '==', clientId );
                 }
                 query = query.orderBy( VISITS.DT, 'desc' );
@@ -45,9 +44,10 @@ export class VisitsService {
                 take( 1 ),
                 tap( response => {
                     const tableData: IVisit[] = [];
-                    for ( let item of response.docs ) {
+                    for ( const item of response.docs ) {
                         tableData.push( item.data() as IVisit );
                     }
+                    console.log(tableData);
                     this._itemsSubject.next( tableData );
                 }, error => {
                     console.log( 'Visit service loadItems error', error );
@@ -55,6 +55,10 @@ export class VisitsService {
             ).subscribe();
     }
 
+    /**
+     * Delete all visits for a specific client.
+     * @param clientId string
+     */
     deleteAllClientVisits( clientId: string ): Observable<boolean> {
         return this.store.collection( CollectionEnum.VISITS, ref => ref
             .where( VISITS.CLIENTID, '==', clientId )
@@ -83,13 +87,10 @@ export class VisitsService {
         const cdx = this;
         item.id = this.store.createId();
         return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).set( item )
-            .then( function( success ) {
-                const visits: IVisit[] = cdx._itemsSubject.value;
-                visits.push( item );
-                cdx._itemsSubject.next( visits.sort( ( visitA: IVisit, visitB: IVisit ) => visitA.dt < visitB.dt ? 1 : -1 ) );
+            .then( () => {
                 return Promise.resolve( true );
             } )
-            .catch( function( error ) {
+            .catch( ( error ) => {
                 console.log( 'Visit service add item error', error );
                 return Promise.reject( false );
             } )
@@ -104,14 +105,14 @@ export class VisitsService {
     updateItem( item: IVisit ): Observable<boolean> {
         const cdx = this;
         return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).update( item )
-            .then( function( success ) {
+            .then( () => {
                 const visits: IVisit[] = cdx._itemsSubject.value;
                 const index: number = cdx._itemsSubject.value.findIndex( ( client: IVisit ) => client.id === item.id );
                 visits[ index ] = item;
                 cdx._itemsSubject.next( visits.sort( ( visitA: IVisit, visitB: IVisit ) => visitA.dt > visitB.dt ? 1 : -1 ) );
                 return true;
             } )
-            .catch( function( error ) {
+            .catch( ( error ) => {
                 console.log( 'Visit service update item error', error );
                 return false;
             } )
@@ -126,11 +127,11 @@ export class VisitsService {
     deleteItem( item: IVisit ): Observable<boolean> {
         const cdx = this;
         return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).delete()
-            .then( function( success ) {
-                cdx._itemsSubject.next( cdx._itemsSubject.value.filter( ( visit: IVisit ) => visit.id != item.id ) );
+            .then( () => {
+                cdx._itemsSubject.next( cdx._itemsSubject.value.filter( ( visit: IVisit ) => visit.id !== item.id ) );
                 return true;
             } )
-            .catch( function( error ) {
+            .catch( ( error ) => {
                 console.log( 'Visit service delete item error', error );
                 return false;
             } )

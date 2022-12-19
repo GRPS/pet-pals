@@ -16,7 +16,7 @@
             </thead>
             <tbody>
             <tr *ngFor="let item of items" (click)="open(item, $event)">
-                <td>{{ item.dt }}</td>
+                <td>{{ item.dt | date:'E, dd LLL yyyy' }}</td>
                 <td>{{ item.name }}</td>
                 <td style="white-space: break-spaces;">{{ item.notes }}</td>
             </tr>
