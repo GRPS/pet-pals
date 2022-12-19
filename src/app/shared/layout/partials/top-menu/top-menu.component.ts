@@ -10,6 +10,10 @@ export class TopMenuComponent implements OnInit {
 
     searchTerm: string;
 
+    get canShow(): boolean {
+        return this._searchService.canShow();
+    }
+
     constructor( private _searchService: SearchService ) {
     }
 

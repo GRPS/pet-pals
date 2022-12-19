@@ -31,6 +31,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
         if ( !clientsService.areClientsLoaded() ) {
             this.clientsService.loadBatch( this.searchTerm, true );
         }
+        this._searchService.showSearch();
     }
 
     ngOnInit(): void {

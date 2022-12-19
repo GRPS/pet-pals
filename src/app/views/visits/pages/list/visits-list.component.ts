@@ -28,6 +28,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
         private _router: Router,
         private _searchService: SearchService
     ) {
+        this._searchService.hideSearch();
     }
 
     ngOnInit(): void {

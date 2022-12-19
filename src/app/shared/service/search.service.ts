@@ -6,6 +6,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 } )
 export class SearchService {
 
+    private _canShow: boolean = false;
+
     /**
      * Handle the search term.
      * @private
@@ -33,6 +35,17 @@ export class SearchService {
      */
     getSearchTerm(): string {
         return this._searchTermSubject.value;
+    }
+
+    canShow(): boolean {
+        return this._canShow;
+    }
+    hideSearch(): void {
+        this._canShow = false;
+    }
+
+    showSearch(): void {
+        this._canShow = true;
     }
 
 }

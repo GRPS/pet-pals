@@ -9,6 +9,7 @@ import { Observable, Subject } from 'rxjs';
 import { CanComponentDeactivate } from '../../../../shared/directives/can-deactivate-guard.service';
 import { CLIENTS } from '../../enums/clients.enum';
 import { VisitsService } from '../../../visits/services/visits.service';
+import { SearchService } from '../../../../shared/service/search.service';
 
 @Component( {
     selector: 'app-record',
@@ -45,10 +46,12 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
         private formBuilder: FormBuilder,
         private _clientsService: ClientsService,
         private _visitsService: VisitsService,
+        private _searchService: SearchService,
         private _alertService: AlertService,
         private _route: ActivatedRoute,
         private _router: Router,
     ) {
+        this._searchService.hideSearch();
     }
 
     ngOnInit(): void {

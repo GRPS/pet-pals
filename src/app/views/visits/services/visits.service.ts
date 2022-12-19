@@ -36,7 +36,9 @@ export class VisitsService {
                 if ( clientId !== VISITS.ALL ) {
                     query = query.where( VISITS.CLIENTID, '==', clientId );
                 }
-                query = query.orderBy( VISITS.DT, 'desc' );
+                query = query.orderBy( VISITS.DTYEAR, 'desc' );
+                query = query.orderBy( VISITS.DTMONTH, 'desc' );
+                query = query.orderBy( VISITS.DTDATE, 'desc' );
                 return query;
             }
         ).get()
@@ -47,7 +49,6 @@ export class VisitsService {
                     for ( const item of response.docs ) {
                         tableData.push( item.data() as IVisit );
                     }
-                    console.log(tableData);
                     this._itemsSubject.next( tableData );
                 }, error => {
                     console.log( 'Visit service loadItems error', error );
