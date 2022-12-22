@@ -11,7 +11,7 @@
         </ng-container>
     </app-header>
 
-    <app-field forValue="dt" label="Date *" [readValue]="form.get('dt').value" [isReadMode]="!isEditMode" cls="mt-4">
+    <app-field forValue="dt" label="Date *" [readValue]="form.get('dt').value | date:'E, dd LLL yyyy'" [isReadMode]="!isEditMode" cls="mt-4">
         <input type="date" class="form-control" formControlName="dt" id="dt" *ngIf="isEditMode">
     </app-field>
 

@@ -10,9 +10,6 @@ import { VisitsService } from '../../services/visits.service';
 import { VISITS } from '../../enums/visits.enum';
 import { SearchService } from '../../../../shared/service/search.service';
 
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-
 @Component( {
     selector: 'app-record',
     templateUrl: './record.component.html',
@@ -42,6 +39,10 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
 
     get formNoValid(): boolean {
         return this.form.invalid;
+    }
+
+    get formattedDt(): string {
+        return this.padNumber( this.form.get('dtDate').value ) + '-' + this.padNumber(this.form.get('dtMonth').value ) + '-' + this.form.get('dtYear').value
     }
 
     constructor(
@@ -76,7 +77,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                                 tap( ( item: IVisit ) => {
                                     // We could have been passed either 1 or 2 parameters: '/add/<clientId>' or '/<clientId>'.
                                     this.paramClientId = this.paramClientId ? this.paramClientId : item.clientId;
-
+                                    item.dt = item.dtYear + '-' + this.padNumber( item.dtMonth ) + '-' + this.padNumber( item.dtDate );
                                     this._createForm( item );
                                     this.watchControlDtForChanges();
                                     this.setReadMode();
@@ -121,6 +122,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
     onSubmit(): void {
         const item: IVisit = this.form.value;
         if ( this.form.valid ) {
+            item.dt = new Date( item.dt as Date );
             if ( this.isNew ) {
                 this._visitsService.addItem( item )
                     .pipe(
@@ -149,7 +151,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
      * @return void
      */
     delete(): void {
-        this._alertService.areYouSure( 'Delete Visit?',  this.form.get( VISITS.NAME ).value + ' visit on ' + this.form.get( VISITS.DT ).value )
+        this._alertService.areYouSure( 'Delete Visit?', this.form.get( VISITS.NAME ).value + ' visit on ' + this.form.get( VISITS.DT ).value )
             .then( ( response: boolean ) => {
                 if ( response ) {
                     this._visitsService.deleteItem( this.form.value )
@@ -222,6 +224,10 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                     this.form.get( VISITS.DTYEAR ).setValue( newDate.getFullYear(), { emitEvent: false } );
                 } )
             ).subscribe();
+    }
+
+    private padNumber( value: number ): string {
+        return ( value < 10 ? '0' : '' ) + value;
     }
 
     canDeactivate(): Observable<boolean> | boolean {

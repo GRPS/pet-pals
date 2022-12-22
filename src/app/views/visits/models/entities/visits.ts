@@ -1,7 +1,7 @@
 export interface IVisit {
     id: string;
     clientId: string;
-    dt: string;
+    dt: string | Date | IFireBaseDate;
     dtDate: number;
     dtMonth: number;
     dtYear: number;
@@ -14,4 +14,9 @@ export interface IVisit {
     securityCheck: string;
     visualCheckAm: string;
     visualCheckPm: string;
+}
+
+export interface IFireBaseDate {
+    seconds: number;
+    nanoseconds: number;
 }

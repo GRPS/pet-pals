@@ -3,9 +3,8 @@ import { AngularFirestore, Query } from '@angular/fire/firestore';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
-import { IVisit } from '../models/entities/visits';
+import { IFireBaseDate, IVisit } from '../models/entities/visits';
 import { VISITS } from '../enums/visits.enum';
-import { IClient } from '../../clients/models/entities/client';
 
 @Injectable()
 export class VisitsService {
@@ -49,8 +48,11 @@ export class VisitsService {
                 take( 1 ),
                 tap( response => {
                     const tableData: IVisit[] = [];
-                    for ( const item of response.docs ) {
-                        tableData.push( item.data() as IVisit );
+                    for ( const doc of response.docs ) {
+                        const item: IVisit = doc.data() as IVisit;
+                        const fdt: IFireBaseDate = item.dt as IFireBaseDate;
+                        item.dt = new Date(fdt.seconds * 1000 );
+                        tableData.push( item );
                     }
                     this._itemsSubject.next( tableData );
                 }, error => {
