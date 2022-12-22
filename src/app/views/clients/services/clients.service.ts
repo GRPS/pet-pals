@@ -71,7 +71,6 @@ export class ClientsService {
             .pipe(
                 take( 1 ),
                 tap( response => {
-                    console.log( 'loadBatch' );
                     if ( ! response.length ) {
                         console.log( 'No client Data Available' );
                         return false;

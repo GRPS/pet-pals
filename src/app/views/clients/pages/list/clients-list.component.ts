@@ -120,7 +120,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             item.health += i;
             item.name += i;
             item.other += i;
-            this.clientsService.addItem( item, i === this.clientsService.getMaxPerPage() );
+            this.clientsService.addItem( item );//, i === this.clientsService.getMaxPerPage() );
         }
     }
 

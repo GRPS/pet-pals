@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from '../../../../shared/service/alert.service';
-import { take, takeUntil, tap } from 'rxjs/operators';
+import { filter, take, takeUntil, tap } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { CanComponentDeactivate } from '../../../../shared/directives/can-deactivate-guard.service';
@@ -9,6 +9,9 @@ import { IVisit } from '../../models/entities/visits';
 import { VisitsService } from '../../services/visits.service';
 import { VISITS } from '../../enums/visits.enum';
 import { SearchService } from '../../../../shared/service/search.service';
+
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 @Component( {
     selector: 'app-record',
@@ -211,6 +214,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
         this.form.get( 'dt' ).valueChanges
             .pipe(
                 takeUntil( this._unsubscribeAll ),
+                filter( f => this.form.enabled ),
                 tap( ( value: string ) => {
                     const newDate: Date = new Date( value );
                     this.form.get( VISITS.DTDATE ).setValue( newDate.getDate(), { emitEvent: false } );

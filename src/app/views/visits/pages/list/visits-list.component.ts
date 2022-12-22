@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { SearchService } from '../../../../shared/service/search.service';
-import { tap } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 import { VisitsService } from '../../services/visits.service';
 import { IVisit } from '../../models/entities/visits';
 import { VISITS } from '../../enums/visits.enum';
@@ -36,10 +36,13 @@ export class VisitsListComponent implements OnInit, OnDestroy {
         // Load visits.
         this._route.paramMap
             .pipe(
+                takeUntil( this._unsubscribeAll ),
                 tap( ( params: ParamMap ) => {
                     this.paramClientId = params.get( VISITS.CLIENTID );
                     this.visitsService.setIsAllVisits( this.paramClientId === VISITS.ALL );
-                    this.visitsService.loadItems( this.paramClientId );
+                    if ( ! this.visitsService.areVisitsLoaded() ) {
+                        this.visitsService.loadItems( this.paramClientId );
+                    }
                 } )
             ).subscribe();
 
@@ -65,7 +68,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
             .then( () => {
             } )
             .catch( error => {
-                console.log('Navigate from visit list to open existing visit', error);
+                console.log( 'Navigate from visit list to open existing visit', error );
             } );
     }
 
@@ -80,7 +83,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
                 this.visitsService.reset();
             } )
             .catch( error => {
-                console.log('Navigate from visit list to specific client', error);
+                console.log( 'Navigate from visit list to specific client', error );
             } );
     }
 
@@ -93,7 +96,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
             .then( () => {
             } )
             .catch( error => {
-                console.log('Navigate from visit list to new visit error', error);
+                console.log( 'Navigate from visit list to new visit error', error );
             } );
     }
 
