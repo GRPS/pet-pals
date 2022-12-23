@@ -55,6 +55,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
+        this.visitsService.reset();
     }
 
     /**
@@ -80,7 +81,6 @@ export class VisitsListComponent implements OnInit, OnDestroy {
         const url: string = this.visitsService.getIsAllVisits() ? '/clients' : '/clients/' + this.paramClientId;
         this._router.navigate( [ url ] )
             .then( () => {
-                this.visitsService.reset();
             } )
             .catch( error => {
                 console.log( 'Navigate from visit list to specific client', error );

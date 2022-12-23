@@ -2,7 +2,7 @@
 
     <app-header [title]="getTitle">
         <ng-container *ngIf="!isEditMode">
-            <button type="button" class="btn btn-info btn-sm" (click)="visits()">Visits <i class="bi bi-list"></i></button>
+            <button type="button" class="btn btn-warning btn-sm" (click)="visits()">Visits <i class="bi bi-list"></i></button>
             <button type="button" class="btn btn-primary btn-sm ml-2" (click)="setEditMode()">Edit <i class="bi bi-pencil"></i></button>
             <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
         </ng-container>

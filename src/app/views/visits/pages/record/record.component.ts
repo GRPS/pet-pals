@@ -42,7 +42,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
     }
 
     get formattedDt(): string {
-        return this.padNumber( this.form.get('dtDate').value ) + '-' + this.padNumber(this.form.get('dtMonth').value ) + '-' + this.form.get('dtYear').value
+        return this.padNumber( this.form.get( 'dtDate' ).value ) + '-' + this.padNumber( this.form.get( 'dtMonth' ).value ) + '-' + this.form.get( 'dtYear' ).value;
     }
 
     constructor(
@@ -128,8 +128,8 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                     .pipe(
                         take( 1 ),
                         tap( () => {
-                            this._alertService.toast( 'Item Added!' );
-                            this.back();
+                            this._alertService.toast( 'Visit Added!' );
+                            this.back( false );
                         } )
                     ).subscribe();
             } else {
@@ -137,7 +137,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                     .pipe(
                         take( 1 ),
                         tap( () => {
-                            this._alertService.toast( 'Item Updated!' );
+                            this._alertService.toast( 'Visit Updated!' );
                             this.back();
                         } )
                     ).subscribe();
@@ -159,7 +159,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                             take( 1 ),
                             tap( () => {
                                 this.back();
-                                this._alertService.toast( 'Item deleted!' );
+                                this._alertService.toast( 'Visit deleted!' );
                             } )
                         ).subscribe();
                 }
@@ -170,9 +170,11 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
      * Go back to client visits list.
      * @return void
      */
-    back(): void {
+    back( doReset: boolean = false ): void {
         setTimeout( () => {
-            this._visitsService.reset();
+            if ( doReset ) {
+                this._visitsService.reset();
+            }
             const url: string = this._visitsService.getIsAllVisits() ? '/visits/list/all' : '/visits/list/' + this.paramClientId;
             this._router.navigate( [ url ] )
                 .then( () => {

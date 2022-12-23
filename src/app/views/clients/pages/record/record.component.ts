@@ -127,7 +127,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                     .pipe(
                         take( 1 ),
                         tap( () => {
-                            this._alertService.toast( 'Item Added!' );
+                            this._alertService.toast( 'Client Added!' );
                             this.back();
                         } )
                     ).subscribe();
@@ -136,7 +136,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                     .pipe(
                         take( 1 ),
                         tap( () => {
-                            this._alertService.toast( 'Item Updated!' );
+                            this._alertService.toast( 'Client Updated!' );
                             this.back();
                         } )
                     ).subscribe();
@@ -158,7 +158,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                             tap( ( result: boolean ) => {
                                 if ( result ) {
                                     this.back();
-                                    this._alertService.toast( 'Item deleted!' );
+                                    this._alertService.toast( 'Client deleted!' );
                                 } else {
                                     this._alertService.toast( 'Error deleting client amd it\'s visit logs.' );
                                 }
