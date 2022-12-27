@@ -192,7 +192,8 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
     private _createForm( item: IClient = null ): void {
         this.form = this.formBuilder.group( {
             id: [ item ? item.id : '', Validators.compose( [] ) ],
-            address: [ item ? item.address : '', Validators.compose( [ Validators.required ] ) ],
+            address: [ item ? item.address : '', Validators.compose( [] ) ],
+            securedIndoors: [ item ? item.securedIndoors : '', Validators.compose( [] ) ],
             customerNumber: [ item ? item.customerNumber : '', Validators.compose( [ Validators.required ] ) ],
             feedingRoutine: [ item ? item.feedingRoutine : '', Validators.compose( [] ) ],
             health: [ item ? item.health : '', Validators.compose( [] ) ],

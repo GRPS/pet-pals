@@ -24,8 +24,12 @@
         <input type="text" class="form-control" formControlName="petName" id="petName" *ngIf="isEditMode">
     </app-field>
 
-    <app-field forValue="address" label="Address *" [readValue]="form.get('address').value" [isReadMode]="!isEditMode">
+    <app-field forValue="address" label="Address" [readValue]="form.get('address').value" [isReadMode]="!isEditMode">
         <textarea rows="5" class="form-control" formControlName="address" id="address" *ngIf="isEditMode"></textarea>
+    </app-field>
+
+    <app-field forValue="securedIndoors" label="Secured Indoors" [readValue]="form.get('securedIndoors').value" [isReadMode]="!isEditMode">
+        <textarea rows="5" class="form-control" formControlName="securedIndoors" id="securedIndoors" *ngIf="isEditMode"></textarea>
     </app-field>
 
     <app-field forValue="health" label="Health" [readValue]="form.get('health').value" [isReadMode]="!isEditMode">

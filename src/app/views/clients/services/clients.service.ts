@@ -16,7 +16,7 @@ export class ClientsService {
      * Batch number to load.
      * @private
      */
-    private _maxPerPage = 50;
+    private _maxPerPage = 10;
 
     /**
      * Storage for all clients fetched from Firebase.
@@ -34,6 +34,7 @@ export class ClientsService {
      * @private
      */
     private _countClientSubject: BehaviorSubject<number> = new BehaviorSubject<number>( 0 );
+
     // countClient$: Observable<number> = this._countClientSubject.asObservable();
 
     constructor(
@@ -56,12 +57,14 @@ export class ClientsService {
         this.store.collection( CollectionEnum.CLIENTS, ref => {
                 let query: Query = ref;
                 if ( searchTerm !== '' ) {
-                    query = query.where( 'petName', '==', searchTerm );
+                    query = query.where( 'customerNumber', '==', searchTerm );
                     this._itemsSubject.next( [] );
                     this.lastInResponse = null;
                 }
                 query = query.limit( this._maxPerPage );
-                query = query.orderBy( 'customerNumber', 'asc' );
+                if ( searchTerm === '' ) {
+                    query = query.orderBy( 'customerNumber', 'asc' );
+                }
                 if ( this.lastInResponse ) {
                     query = query.startAfter( this.lastInResponse );
                 }

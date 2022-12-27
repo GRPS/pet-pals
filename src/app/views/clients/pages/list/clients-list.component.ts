@@ -107,6 +107,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             const item: IClient = {
                 id: '',
                 address: 'Dummy A ',
+                securedIndoors: 'Dummy A ',
                 customerNumber: 'Dummy CN ',
                 feedingRoutine: 'Dunny fr ',
                 health: 'Dummy h ',
@@ -115,6 +116,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
                 petName: 'Dummy'
             };
             item.address += i;
+            item.securedIndoors += i;
             item.customerNumber += i;
             item.feedingRoutine += i;
             item.health += i;
