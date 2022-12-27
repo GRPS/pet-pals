@@ -1,8 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid flex-nowrap">
-        <a class="navbar-brand" routerLink="/clients">
-            <img src="/assets/images/pet-pal-logo.png" alt="petpals logo" height="50"
-                 class="d-inline-block align-text-top">
+        <a class="navbar-brand pointer" (click)="logout()" title="Logout">
+            <img src="/assets/images/pet-pal-logo.png" alt="petpals logo" height="50" class="d-inline-block align-text-top">
         </a>
         <div class="d-flex" *ngIf="canShow">
             <div class="input-group">

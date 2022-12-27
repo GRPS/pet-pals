@@ -10,6 +10,8 @@ import { AlertService } from './shared/service/alert.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from './views/auth/services/auth.service';
+import { AuthGuard } from './views/auth/services/auth-gaurd.service';
 
 @NgModule( {
     declarations: [
@@ -25,7 +27,9 @@ import { CommonModule } from '@angular/common';
         AngularFirestoreModule,
     ],
     providers: [
-        AlertService
+        AlertService,
+        AuthService,
+        AuthGuard
     ],
     bootstrap: [ AppComponent ]
 } )
