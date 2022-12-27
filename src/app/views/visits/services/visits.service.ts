@@ -52,6 +52,7 @@ export class VisitsService {
                         const item: IVisit = doc.data() as IVisit;
                         const fdt: IFireBaseDate = item.dt as IFireBaseDate;
                         item.dt = new Date(fdt.seconds * 1000 );
+                        item.checked = false;
                         tableData.push( item );
                     }
                     this._itemsSubject.next( tableData );
@@ -100,12 +101,15 @@ export class VisitsService {
     addItem( item: IVisit ): Observable<boolean> {
         const cdx = this;
         item.id = this.store.createId();
+        const rememberCheckedValue: boolean = item.checked;
+        delete item.checked;
         return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).set( item )
             .then( () => {
-                let visits: IVisit[] = cdx._itemsSubject.value;
-                visits.push( item );
-                visits = visits.sort( ( visitA: IVisit, visitB: IVisit ) => visitA.dt > visitB.dt ? -1 : 1 );
-                cdx._itemsSubject.next( visits );
+                // item.checked = rememberCheckedValue;
+                // let visits: IVisit[] = cdx._itemsSubject.value;
+                // visits.push( item );
+                // visits = visits.sort( ( visitA: IVisit, visitB: IVisit ) => visitA.dt > visitB.dt ? -1 : 1 );
+                // cdx._itemsSubject.next( visits );
                 return Promise.resolve( true );
             } )
             .catch( ( error ) => {
@@ -122,8 +126,11 @@ export class VisitsService {
      */
     updateItem( item: IVisit ): Observable<boolean> {
         const cdx = this;
+        const rememberCheckedValue: boolean = item.checked;
+        delete item.checked;
         return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).update( item )
             .then( () => {
+                item.checked = rememberCheckedValue;
                 const visits: IVisit[] = cdx._itemsSubject.value;
                 const index: number = cdx._itemsSubject.value.findIndex( ( client: IVisit ) => client.id === item.id );
                 visits[ index ] = item;
@@ -186,6 +193,10 @@ export class VisitsService {
      */
     getIsAllVisits(): boolean {
         return this._isAllVisits;
+    }
+
+    getCheckedVisits(): IVisit[] {
+        return this._itemsSubject.value.filter( ( item: IVisit ) => item.checked );
     }
 
 }

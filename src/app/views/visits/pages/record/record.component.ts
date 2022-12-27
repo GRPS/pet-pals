@@ -207,7 +207,8 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
             notes: [ item ? item.notes : '', Validators.compose( [] ) ],
             securityCheck: [ item ? item.securityCheck : '', Validators.compose( [] ) ],
             visualCheckAm: [ item ? item.visualCheckAm : '', Validators.compose( [] ) ],
-            visualCheckPm: [ item ? item.visualCheckPm : '', Validators.compose( [] ) ]
+            visualCheckPm: [ item ? item.visualCheckPm : '', Validators.compose( [] ) ],
+            checked: [ false, Validators.compose( [] ) ]
         } );
     }
 

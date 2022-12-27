@@ -14,6 +14,7 @@ export interface IVisit {
     securityCheck: string;
     visualCheckAm: string;
     visualCheckPm: string;
+    checked?: boolean;
 }
 
 export interface IFireBaseDate {

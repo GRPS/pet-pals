@@ -9,11 +9,19 @@ export class AlertService {
     constructor() {
     }
 
+    alert( title: string, html: string, icon: SweetAlertIcon = 'warning' ): void {
+        Swal.fire(
+            title,
+            html,
+            icon,
+    ).then( ( result ) => {} )
+    }
+
     /**
      * Are uou sure prompt.
      * @return
      */
-    areYouSure( title: string = 'Delete Record', html: string = 'Are you sure?' ): Promise<boolean> {
+    areYouSure( title: string = 'Delete Record', html: string = 'Are you sure?', showCancelButton: boolean = true, icon: SweetAlertIcon = 'warning', confirmButtonText: string = 'Yes' ): Promise<boolean> {
         return Swal.mixin( {
             customClass: {
                 confirmButton: 'btn btn-success',
@@ -23,9 +31,9 @@ export class AlertService {
         } ).fire( {
             title,
             html,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
+            icon,
+            showCancelButton,
+            confirmButtonText,
             cancelButtonText: 'No',
             reverseButtons: true
         } ).then( ( result ) => {

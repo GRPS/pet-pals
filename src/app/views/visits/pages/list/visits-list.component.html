@@ -1,24 +1,27 @@
 <ng-container *ngIf="(visitsService.items$ | async) as items">
 
     <app-header [title]="visitsService.getIsAllVisits()? 'All Visits' : 'Client Visits'" [badge]="items.length.toString()">
-        <button type="button" class="btn btn-info btn-sm" (click)="add()" *ngIf="!visitsService.getIsAllVisits()">Add <i class="bi bi-plus"></i></button>
-        <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
+        <button type="button" class="btn btn-warning btn-sm mr-2 mb-4" (click)="export()">Export Selected <i class="bi bi-save"></i></button>
+        <button type="button" class="btn btn-info btn-sm mb-4" (click)="add()" *ngIf="!visitsService.getIsAllVisits()">Add <i class="bi bi-plus"></i></button>
+        <button type="button" class="btn btn-secondary btn-sm ml-2 mb-4" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
     </app-header>
 
-    <div class="table-responsive mt-4">
+    <div class="table-responsive">
         <table class="table table-bordered table-hover table-sm">
             <thead>
             <tr>
+                <th></th>
                 <th>Date</th>
                 <th>Name</th>
                 <th>Notes</th>
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let item of items" (click)="open(item, $event)">
-                <td>{{ item.dt | date:'E, dd LLL yyyy' }}</td>
-                <td>{{ item.name }}</td>
-                <td style="white-space: break-spaces;">{{ item.notes }}</td>
+            <tr *ngFor="let item of items; let i=index;">
+                <td><input type="checkbox" value="{{ item.id }}" (click)="toggleCheckedItem(item)"></td>
+                <td (click)="open(item, $event)">{{ item.dt | date:'E, dd LLL yyyy' }}</td>
+                <td (click)="open(item, $event)">{{ item.name }}</td>
+                <td (click)="open(item, $event)" style="white-space: break-spaces;">{{ item.notes }}</td>
             </tr>
             </tbody>
         </table>

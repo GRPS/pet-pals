@@ -6,11 +6,14 @@ import { takeUntil, tap } from 'rxjs/operators';
 import { VisitsService } from '../../services/visits.service';
 import { IVisit } from '../../models/entities/visits';
 import { VISITS } from '../../enums/visits.enum';
+import { AlertService } from '../../../../shared/service/alert.service';
+import { DatePipe } from '@angular/common';
 
 @Component( {
     selector: 'app-visits-list',
     templateUrl: './visits-list.component.html',
-    styleUrls: [ './visits-list.component.scss' ]
+    styleUrls: [ './visits-list.component.scss' ],
+    providers: [ DatePipe ]
 } )
 export class VisitsListComponent implements OnInit, OnDestroy {
 
@@ -26,7 +29,9 @@ export class VisitsListComponent implements OnInit, OnDestroy {
         public visitsService: VisitsService,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _searchService: SearchService
+        private _searchService: SearchService,
+        private _alertService: AlertService,
+        private _datepipe: DatePipe
     ) {
         this._searchService.hideSearch();
     }
@@ -98,6 +103,53 @@ export class VisitsListComponent implements OnInit, OnDestroy {
             .catch( error => {
                 console.log( 'Navigate from visit list to new visit error', error );
             } );
+    }
+
+    toggleCheckedItem( item ): void {
+        item.checked = ! item.checked;
+    }
+
+    /**
+     * Export selected visits to the clipboard.
+     * @return void
+     */
+    export(): void {
+
+        const checkedItems: IVisit[] = this.visitsService.getCheckedVisits();
+
+        if ( checkedItems.length === 0 ) {
+            this._alertService.areYouSure( 'Nothing to export!', 'Please select which visits you want to export.', false, 'warning', 'OK' );
+        } else {
+            console.log( checkedItems );
+
+            let data: string = ''
+            checkedItems.forEach( ( item: IVisit ) => data +=
+                'Date: ' + this._datepipe.transform( item.dt, 'EEEE, dd MMMM yyyy' ) + '\n' +
+                'Visual Check AM: ' + item.visualCheckAm + '\n' +
+                'Visual Check PM: ' + item.visualCheckPm + '\n' +
+                'Food Intake AM: ' + item.foodIntakeAm + '\n' +
+                'Food Intake PM: ' + item.foodIntakePm + '\n' +
+                'Medication: ' + item.medication + '\n' +
+                'Security Check: ' + item.securityCheck + '\n' +
+                'Notes: ' + item.notes + '\n\n\n'
+            );
+
+            const val: string = 'poo\tnwee\n\nbag';
+            const selBox = document.createElement( 'textarea' );
+            selBox.style.position = 'fixed';
+            selBox.style.left = '0';
+            selBox.style.top = '0';
+            selBox.style.opacity = '0';
+            selBox.value = data;
+            document.body.appendChild( selBox );
+            selBox.focus();
+            selBox.select();
+            document.execCommand( 'copy' );
+            document.body.removeChild( selBox );
+
+            this._alertService.areYouSure( 'Clipboard Updated', 'The clipboard now contains your selected visits data.<br><br>You can now paste the clipboard content to where ever you wish. ', false, 'success', 'OK' );
+        }
+
     }
 
 }
