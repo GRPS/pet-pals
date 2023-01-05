@@ -102,6 +102,13 @@ export class ClientsListComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * Export data.
+     */
+    export(): void {
+        this.clientsService.export();
+    }
+
+    /**
      * Add dummy data.
      * @return void.
      */

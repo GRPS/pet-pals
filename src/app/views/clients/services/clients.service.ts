@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, Query } from '@angular/fire/firestore';
+import { AngularFirestore, Query, QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { BehaviorSubject, from, Observable, of, Subscription } from 'rxjs';
 import { catchError, map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
-import { IClient } from '../models/entities/client';
+import { IClient, IExport } from '../models/entities/client';
 import { VisitsService } from '../../visits/services/visits.service';
 import { IClientCount } from '../../../shared/models/entities/setting';
 import { SearchService } from '../../../shared/service/search.service';
@@ -11,6 +11,8 @@ import { AuthService } from '../../auth/services/auth.service';
 
 import firebase from 'firebase';
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
+import { IVisit } from '../../visits/models/entities/visits';
+import { ClipboardService } from '../../auth/services/clipboard.service';
 
 @Injectable()
 export class ClientsService {
@@ -60,7 +62,8 @@ export class ClientsService {
         private store: AngularFirestore,
         private _visitService: VisitsService,
         private _searchService: SearchService,
-        private _auth: AuthService
+        private _auth: AuthService,
+        private _clipboardService: ClipboardService
     ) {
         this._getCurrentClientCountFromFirebase();
     }
@@ -293,6 +296,38 @@ export class ClientsService {
      */
     getClients(): IClient[] {
         return this._itemsSubject.value;
+    }
+
+    /**
+     * Export data.
+     */
+    export(): void {
+        this.store.collection<IClientCount>( CollectionEnum.CLIENTS ).get()
+            .pipe(
+                take( 1 ),
+                tap( ( clientsSnapshot: QuerySnapshot ) => {
+                    const fullExport: IExport[] = [];
+                    clientsSnapshot.docs.forEach( ( item: QueryDocumentSnapshot<IClient> ) => {
+                        const clientDoc: IClient = item.data() as IClient;
+                        this._visitService.getItemsByClientId( clientDoc.id ).subscribe( ( visitsSnapshot: QuerySnapshot<IVisit> ) => {
+                            const clientExport: IExport = {
+                                ... clientDoc,
+                                visits: []
+                            };
+                            visitsSnapshot.docs.forEach( item => {
+                                const visitDoc: IVisit = item.data() as IVisit;
+                                clientExport.visits.push( visitDoc );
+                            } );
+                            fullExport.push( clientExport );
+
+                            // Once we exported all clients and the client visits then we can export the data.
+                            if ( clientsSnapshot.docs.length === fullExport.length ) {
+                                this._clipboardService.add( JSON.stringify( fullExport ) );
+                            }
+                        } );
+                    } );
+                } )
+            ).subscribe();
     }
 
     /**

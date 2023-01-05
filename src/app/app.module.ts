@@ -12,6 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './views/auth/services/auth.service';
 import { AuthGuard } from './views/auth/services/auth-gaurd.service';
+import { ClipboardService } from './views/auth/services/clipboard.service';
 
 @NgModule( {
     declarations: [
@@ -28,6 +29,7 @@ import { AuthGuard } from './views/auth/services/auth-gaurd.service';
     ],
     providers: [
         AlertService,
+        ClipboardService,
         AuthService,
         AuthGuard
     ],

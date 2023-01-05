@@ -8,6 +8,7 @@ import { IVisit } from '../../models/entities/visits';
 import { VISITS } from '../../enums/visits.enum';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { DatePipe } from '@angular/common';
+import { ClipboardService } from '../../../auth/services/clipboard.service';
 
 @Component( {
     selector: 'app-visits-list',
@@ -31,7 +32,8 @@ export class VisitsListComponent implements OnInit, OnDestroy {
         private _router: Router,
         private _searchService: SearchService,
         private _alertService: AlertService,
-        private _datepipe: DatePipe
+        private _datepipe: DatePipe,
+        private _clipboardService: ClipboardService
     ) {
         this._searchService.hideSearch();
     }
@@ -137,20 +139,8 @@ export class VisitsListComponent implements OnInit, OnDestroy {
                 'Notes PM: ' + ( item.notesPm ? item.notesPm : '' ) + '\n\n\n'
             );
 
-            const val: string = 'poo\tnwee\n\nbag';
-            const selBox = document.createElement( 'textarea' );
-            selBox.style.position = 'fixed';
-            selBox.style.left = '0';
-            selBox.style.top = '0';
-            selBox.style.opacity = '0';
-            selBox.value = data;
-            document.body.appendChild( selBox );
-            selBox.focus();
-            selBox.select();
-            document.execCommand( 'copy' );
-            document.body.removeChild( selBox );
+            this._clipboardService.add( data );
 
-            this._alertService.areYouSure( 'Clipboard Updated', 'The clipboard now contains your selected visits data.<br><br>You can now paste the clipboard content to where ever you wish. ', false, 'success', 'OK' );
         }
 
     }

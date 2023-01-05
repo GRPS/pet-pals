@@ -1,3 +1,5 @@
+import { IVisit } from '../../../visits/models/entities/visits';
+
 export interface IClient {
     id: string;
     securedIndoors: string;
@@ -10,4 +12,8 @@ export interface IClient {
     petName: string;
     emailAddress: string;
     litter: string;
+}
+
+export interface IExport extends IClient {
+    visits: IVisit[];
 }

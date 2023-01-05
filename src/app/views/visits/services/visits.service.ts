@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, Query } from '@angular/fire/firestore';
+import { AngularFirestore, Query, QuerySnapshot } from '@angular/fire/firestore';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
@@ -171,6 +171,16 @@ export class VisitsService {
      */
     getItemById( clientId: string, docId: string ): Observable<IVisit> {
         return this.store.collection<IVisit>( CollectionEnum.CLIENTS + '/' + clientId + '/visits' ).doc( docId ).valueChanges();
+    }
+
+    /**
+     * Get a document by its id from teh relevant client.
+     * @param clientId string
+     * @param docId string
+     * @return Observable<IVisit>
+     */
+    getItemsByClientId( clientId: string ): Observable<QuerySnapshot<IVisit>> {
+        return this.store.collection<IVisit>( CollectionEnum.CLIENTS + '/' + clientId + '/visits' ).get();
     }
 
     /**
