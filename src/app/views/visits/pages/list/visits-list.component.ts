@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { SearchService } from '../../../../shared/service/search.service';
 import { takeUntil, tap } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { IVisit } from '../../models/entities/visits';
 import { VISITS } from '../../enums/visits.enum';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { DatePipe } from '@angular/common';
-import { ClipboardService } from '../../../auth/services/clipboard.service';
+import { ClipboardService } from '../../../../shared/service/clipboard.service';
 
 @Component( {
     selector: 'app-visits-list',
@@ -19,6 +19,11 @@ import { ClipboardService } from '../../../auth/services/clipboard.service';
 export class VisitsListComponent implements OnInit, OnDestroy {
 
     paramClientId: string;
+
+    private _itemsSubject: BehaviorSubject<IVisit[]> = new BehaviorSubject<IVisit[]>( [] );
+    items$: Observable<IVisit[]> = this._itemsSubject.asObservable();
+
+    subscription: Subscription;
 
     /**
      * Store all subscriptions.
@@ -53,6 +58,8 @@ export class VisitsListComponent implements OnInit, OnDestroy {
                 } )
             ).subscribe();
 
+        this.subscription = this.visitsService.items$.subscribe( ( items: IVisit[] ) => this._itemsSubject.next( items ) );
+
     }
 
     /**
@@ -60,6 +67,9 @@ export class VisitsListComponent implements OnInit, OnDestroy {
      * @return void
      */
     ngOnDestroy(): void {
+        if ( this.subscription ) {
+            this.subscription.unsubscribe();
+        }
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
         this.visitsService.reset();
@@ -122,7 +132,6 @@ export class VisitsListComponent implements OnInit, OnDestroy {
         if ( checkedItems.length === 0 ) {
             this._alertService.areYouSure( 'Nothing to export!', 'Please select which visits you want to export.', false, 'warning', 'OK' );
         } else {
-            console.log( checkedItems );
 
             let data: string = '';
             checkedItems.forEach( ( item: IVisit ) => data +=
@@ -143,6 +152,37 @@ export class VisitsListComponent implements OnInit, OnDestroy {
 
         }
 
+    }
+
+    /**
+     * Select or deselect all.
+     * @param checked
+     * @return void
+     */
+    selectAll( checked: boolean = true ): void {
+        this._itemsSubject.next( this._itemsSubject.value.map( ( visit: IVisit ) => {
+            visit.checked = checked;
+            return visit;
+        } ) );
+    }
+
+    /**
+     * Select items between 2 already selected visits.
+     * @return void
+     */
+    selectBetween(): void {
+        const visits: IVisit[] = this._itemsSubject.value;
+        let turnOn: boolean = false;
+        const newVisits: IVisit[] = visits.map( ( visit: IVisit ) => {
+            if ( visit.checked ) {
+                turnOn = !turnOn;
+            }
+            if ( turnOn ) {
+                visit.checked = true;
+            }
+            return visit;
+        } );
+        this._itemsSubject.next( newVisits );
     }
 
 }

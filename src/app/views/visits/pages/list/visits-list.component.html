@@ -1,4 +1,4 @@
-<ng-container *ngIf="(visitsService.items$ | async) as items">
+<ng-container *ngIf="(items$ | async) as items">
 
     <app-header [title]="visitsService.getIsAllVisits()? 'All Visits' : 'Client Visits'" [badge]="items.length.toString()">
         <button type="button" class="btn btn-warning btn-sm mr-2 mb-4" (click)="export()">Export <i class="bi bi-save"></i></button>
@@ -6,11 +6,17 @@
         <button type="button" class="btn btn-secondary btn-sm ml-2 mb-4" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
     </app-header>
 
+    <div class="selects">
+        <button type="button" class="btn btn-link" (click)="selectAll()">Select All</button>
+        <button type="button" class="btn btn-link" (click)="selectAll(false)">Deselect All</button>
+        <button type="button" class="btn btn-link" (click)="selectBetween()">Select between</button>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-sm">
             <thead>
             <tr>
-                <th></th>
+                <th><i class="bi bi-check2-all"></i></th>
                 <th>Date</th>
                 <th>Visitors</th>
                 <th>Notes</th>
@@ -18,7 +24,7 @@
             </thead>
             <tbody>
             <tr *ngFor="let item of items; let i=index;">
-                <td><input type="checkbox" value="{{ item.id }}" (click)="toggleCheckedItem(item)"></td>
+                <td (click)="toggleCheckedItem(item)" [ngStyle]="{'background-color': item.checked ? 'rgb(177 232 183)' : ''}"><i class="bi bi-check-lg" *ngIf="item.checked"></i></td>
                 <td (click)="open(item, $event)">{{ item.dt | date:'E, dd LLL yyyy' }}</td>
                 <td (click)="open(item, $event)">{{ item.visitorAm }}<br>{{ item.visitorPm }}</td>
                 <td (click)="open(item, $event)" style="white-space: break-spaces;">{{ item.notesAm }}<br>{{ item.notesPm }}</td>

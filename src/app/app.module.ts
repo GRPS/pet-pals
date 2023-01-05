@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './views/auth/services/auth.service';
 import { AuthGuard } from './views/auth/services/auth-gaurd.service';
-import { ClipboardService } from './views/auth/services/clipboard.service';
+import { ClipboardService } from './shared/service/clipboard.service';
 
 @NgModule( {
     declarations: [

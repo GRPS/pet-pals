@@ -12,7 +12,7 @@ import { AuthService } from '../../auth/services/auth.service';
 import firebase from 'firebase';
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
 import { IVisit } from '../../visits/models/entities/visits';
-import { ClipboardService } from '../../auth/services/clipboard.service';
+import { ClipboardService } from '../../../shared/service/clipboard.service';
 
 @Injectable()
 export class ClientsService {

@@ -3,6 +3,9 @@ table {
         background-color: #68B34D;
         color: #FFFFFF;
         white-space: nowrap;
+        &:nth-child( 1 ) {
+            text-align: center;
+        }
     }
     tbody tr {
         cursor: pointer;
@@ -26,5 +29,17 @@ table {
                 min-width: 300px;
             }
         }
+    }
+}
+
+.selects {
+    display: flex;
+    justify-content: flex-start;
+    button {
+        text-decoration: none;
+        font-size: 85%;
+        padding: 0;
+        margin: 0px 30px 10px 0px;
+        color: #555555;
     }
 }

@@ -1,7 +1,7 @@
 <ng-container *ngIf="clientsService.items$ | async as items">
 
     <app-header title="Clients" [badge]="clientsService.getClientCountLocally().toString()">
-        <button type="button" class="btn btn-warning btn-sm mr-2 mb-4" (click)="export()">Export <i class="bi bi-save"></i></button>
+        <button type="button" class="btn btn-warning btn-sm mr-2 mb-4" (click)="export()">Backup <i class="bi bi-save"></i></button>
         <button type="button" class="btn btn-info btn-sm ml-2 mb-4" routerLink="/clients/add">Add <i class="bi bi-plus"></i></button>
     </app-header>
 

@@ -210,4 +210,12 @@ export class VisitsService {
         return this._itemsSubject.value.filter( ( item: IVisit ) => item.checked );
     }
 
+    getVisits(): IVisit[] {
+        return this._itemsSubject.value;
+    }
+
+    setVisits( visits: IVisit[] ): void {
+        this._itemsSubject.next( visits );
+    }
+
 }

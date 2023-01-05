@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AlertService } from '../../../shared/service/alert.service';
+import { AlertService } from './alert.service';
 
 @Injectable()
 export class ClipboardService {
