@@ -1,47 +1,33 @@
 <ng-container *ngIf="clientsService.items$ | async as items">
 
-    <app-header title="Clients">
-<!--        <button type="button" class="btn btn-warning btn-sm" routerLink="/visits/list/all">All Visits <i class="bi bi-list"></i></button>-->
-        <button type="button" class="btn btn-info btn-sm ml-2" routerLink="/clients/add">Add <i class="bi bi-plus"></i></button>
+    <app-header title="Clients" [badge]="clientsService.getClientCountLocally().toString()">
+        <button type="button" class="btn btn-info btn-sm ml-2 mb-4" routerLink="/clients/add">Add <i class="bi bi-plus"></i></button>
     </app-header>
 
-    <div class="loadInfo">
-        <small>Loaded: {{ items.length }} of {{  clientsService.getClientCountLocally() }} clients.</small>
+    <div class="nextBatch mb-2"
+         *ngIf="searchTerm==='' && items.length < clientsService.getClientCountLocally()">
+        <button type="button" class="btn btn-secondary btn-sm" (click)="nextBatch(false)" [disabled]="clientsService.disablePrevious"><i class="bi bi-arrow-left-short"></i> Previous</button>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="nextBatch()" [disabled]="clientsService.disableNext">Next <i class="bi bi-arrow-right-short"></i></button>
     </div>
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-sm">
             <thead>
             <tr>
-                <th>Customer #</th>
+                <th>#</th>
+                <th>Customer Name</th>
                 <th>Pet's Name</th>
-                <th>Name</th>
-                <th>Address</th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let item of items" (click)="open(item, $event)">
                 <td>{{ item.customerNumber }}</td>
-                <td>{{ item.petName }}</td>
                 <td>{{ item.name }}</td>
-                <td>{{ item.address }}</td>
+                <td>{{ item.petName }}</td>
             </tr>
             </tbody>
         </table>
     </div>
-
-    <div class="nextBatch mt-4 mb-4"
-         *ngIf="searchTerm==='' && items.length < clientsService.getClientCountLocally() else allLoaded">
-        <button type="button" class="btn btn-secondary btn-sm" (click)="nextBatch()">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load
-            next batch...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </button>
-    </div>
-
-    <ng-template #allLoaded>
-        <div class="loadInfo mt-2 mb-2">
-            <small>All {{ clientsService.getClientCountLocally() }} clients have been loaded.</small>
-        </div>
-    </ng-template>
 
 </ng-container>
 

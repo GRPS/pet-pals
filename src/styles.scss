@@ -35,8 +35,17 @@
 
 // End of SweetAlert colours.
 
+
 table td, form div.field div, form input, form textarea {
-    font-family: "Corier Neu", monospace, serif; font-size: 0.9em;
+    font-family: "Corier Neu", monospace, serif;
+    font-size: 0.8em;
+    color: #555555;
+}
+table th {
+    font-size: 0.85em;
+}
+form div.field label {
+    font-size: 0.85em
 }
 
 .pr-0 {

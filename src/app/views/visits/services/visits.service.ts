@@ -5,6 +5,7 @@ import { map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IFireBaseDate, IVisit } from '../models/entities/visits';
 import { VISITS } from '../enums/visits.enum';
+import { IClient } from '../../clients/models/entities/client';
 
 @Injectable()
 export class VisitsService {
@@ -31,12 +32,11 @@ export class VisitsService {
      * @return void.
      */
     loadItems( clientId: string ) {
-        this.store.collection( CollectionEnum.VISITS, ref => {
+        this.store.collection( CollectionEnum.CLIENTS + '/' + clientId + '/visits', ref => {
                 let query: Query = ref;
-                // query = query.where( VISITS.DT, '>=', new Date() );
-                if ( clientId !== VISITS.ALL ) {
-                    query = query.where( VISITS.CLIENTID, '==', clientId );
-                }
+                // if ( clientId !== VISITS.ALL ) {
+                //     query = query.where( VISITS.CLIENTID, '==', clientId );
+                // }
                 query = query.orderBy( VISITS.DT, 'desc' );
                 query = query.orderBy( VISITS.DTYEAR, 'desc' );
                 query = query.orderBy( VISITS.DTMONTH, 'desc' );
@@ -51,7 +51,7 @@ export class VisitsService {
                     for ( const doc of response.docs ) {
                         const item: IVisit = doc.data() as IVisit;
                         const fdt: IFireBaseDate = item.dt as IFireBaseDate;
-                        item.dt = new Date(fdt.seconds * 1000 );
+                        item.dt = new Date( fdt.seconds * 1000 );
                         item.checked = false;
                         tableData.push( item );
                     }
@@ -103,7 +103,7 @@ export class VisitsService {
         item.id = this.store.createId();
         const rememberCheckedValue: boolean = item.checked;
         delete item.checked;
-        return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).set( item )
+        return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.clientId ).collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).set( item )
             .then( () => {
                 // item.checked = rememberCheckedValue;
                 // let visits: IVisit[] = cdx._itemsSubject.value;
@@ -128,7 +128,7 @@ export class VisitsService {
         const cdx = this;
         const rememberCheckedValue: boolean = item.checked;
         delete item.checked;
-        return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).update( item )
+        return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.clientId ).collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).update( item )
             .then( () => {
                 item.checked = rememberCheckedValue;
                 const visits: IVisit[] = cdx._itemsSubject.value;
@@ -151,7 +151,7 @@ export class VisitsService {
      */
     deleteItem( item: IVisit ): Observable<boolean> {
         const cdx = this;
-        return from( this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).delete()
+        return from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.clientId ).collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).delete()
             .then( () => {
                 cdx._itemsSubject.next( cdx._itemsSubject.value.filter( ( visit: IVisit ) => visit.id !== item.id ) );
                 return true;
@@ -164,12 +164,13 @@ export class VisitsService {
     }
 
     /**
-     * Get a document by its id.
-     * @param id string
+     * Get a document by its id from teh relevant client.
+     * @param clientId string
+     * @param docId string
      * @return Observable<IVisit>
      */
-    getItemById( id: string ): Observable<IVisit> {
-        return this.store.collection<IVisit>( CollectionEnum.VISITS ).doc( id ).valueChanges();
+    getItemById( clientId: string, docId: string ): Observable<IVisit> {
+        return this.store.collection<IVisit>( CollectionEnum.CLIENTS + '/' + clientId + '/visits' ).doc( docId ).valueChanges();
     }
 
     /**

@@ -8,10 +8,14 @@ export interface IVisit {
     foodIntakeAm: string;
     foodIntakePm: string;
     liquidIntake: string;
-    medication: string;
-    name: string;
-    notes: string;
-    securityCheck: string;
+    medicationAm: string;
+    medicationPm: string;
+    visitorAm: string;
+    visitorPm: string;
+    notesAm: string;
+    notesPm: string;
+    securityCheckAm: string;
+    securityCheckPm: string;
     visualCheckAm: string;
     visualCheckPm: string;
     checked?: boolean;

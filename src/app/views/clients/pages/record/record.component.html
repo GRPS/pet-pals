@@ -13,7 +13,7 @@
     </app-header>
 
     <app-field forValue="dt" label="Customer Number *" [readValue]="form.get('customerNumber').value" [isReadMode]="!isEditMode" cls="mt-4">
-        <input type="text" class="form-control" formControlName="customerNumber" id="customerNumber" *ngIf="isEditMode">
+        <input type="number" class="form-control" formControlName="customerNumber" id="customerNumber" *ngIf="isEditMode">
     </app-field>
 
     <app-field forValue="name" label="Name *" [readValue]="form.get('name').value" [isReadMode]="!isEditMode">
@@ -28,10 +28,6 @@
         <input type="text" class="form-control" formControlName="petName" id="petName" *ngIf="isEditMode">
     </app-field>
 
-    <app-field forValue="address" label="Address" [readValue]="form.get('address').value" [isReadMode]="!isEditMode">
-        <textarea rows="5" class="form-control" formControlName="address" id="address" *ngIf="isEditMode"></textarea>
-    </app-field>
-
     <app-field forValue="securedIndoors" label="Secured Indoors" [readValue]="form.get('securedIndoors').value" [isReadMode]="!isEditMode">
         <textarea rows="5" class="form-control" formControlName="securedIndoors" id="securedIndoors" *ngIf="isEditMode"></textarea>
     </app-field>
@@ -42,6 +38,10 @@
 
     <app-field forValue="feedingRoutine" label="Feeding Routine" [readValue]="form.get('feedingRoutine').value" [isReadMode]="!isEditMode">
         <textarea rows="5" class="form-control" formControlName="feedingRoutine" id="feedingRoutine" *ngIf="isEditMode"></textarea>
+    </app-field>
+
+    <app-field forValue="litter" label="Litter" [readValue]="form.get('litter').value" [isReadMode]="!isEditMode">
+        <textarea rows="5" class="form-control" formControlName="litter" id="litter" *ngIf="isEditMode"></textarea>
     </app-field>
 
     <app-field forValue="other" label="Other" [readValue]="form.get('other').value" [isReadMode]="!isEditMode">

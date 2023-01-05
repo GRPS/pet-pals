@@ -70,7 +70,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
      * @return void
      */
     open( item: IVisit, event: MouseEvent ): void {
-        this._router.navigate( [ '../../' + item.id ], { relativeTo: this._route } )
+        this._router.navigate( [ '../../' + this.paramClientId + '/' + item.id ], { relativeTo: this._route } )
             .then( () => {
             } )
             .catch( error => {
@@ -122,16 +122,19 @@ export class VisitsListComponent implements OnInit, OnDestroy {
         } else {
             console.log( checkedItems );
 
-            let data: string = ''
+            let data: string = '';
             checkedItems.forEach( ( item: IVisit ) => data +=
                 'Date: ' + this._datepipe.transform( item.dt, 'EEEE, dd MMMM yyyy' ) + '\n' +
-                'Visual Check AM: ' + item.visualCheckAm + '\n' +
-                'Visual Check PM: ' + item.visualCheckPm + '\n' +
-                'Food Intake AM: ' + item.foodIntakeAm + '\n' +
-                'Food Intake PM: ' + item.foodIntakePm + '\n' +
-                'Medication: ' + item.medication + '\n' +
-                'Security Check: ' + item.securityCheck + '\n' +
-                'Notes: ' + item.notes + '\n\n\n'
+                'Visual Check AM: ' + ( item.visualCheckAm ? item.visualCheckAm : '' ) + '\n' +
+                'Visual Check PM: ' + ( item.visualCheckPm ? item.visualCheckPm : '' ) + '\n' +
+                'Food Intake AM: ' + ( item.foodIntakeAm ? item.foodIntakeAm : '' ) + '\n' +
+                'Food Intake PM: ' + ( item.foodIntakePm ? item.foodIntakePm : '' ) + '\n' +
+                'Medication AM: ' + ( item.medicationAm ? item.medicationAm : '' ) + '\n' +
+                'Medication PM: ' + ( item.medicationPm ? item.medicationPm : '' ) + '\n' +
+                'Security Check AM: ' + ( item.securityCheckAm ? item.securityCheckAm : '' ) + '\n' +
+                'Security Check PM: ' + ( item.securityCheckPm ? item.securityCheckPm : '' ) + '\n' +
+                'Notes AM: ' + ( item.notesAm ? item.notesAm : '' ) + '\n\n\n' +
+                'Notes PM: ' + ( item.notesPm ? item.notesPm : '' ) + '\n\n\n'
             );
 
             const val: string = 'poo\tnwee\n\nbag';

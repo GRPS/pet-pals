@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, Query } from '@angular/fire/firestore';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, Subscription } from 'rxjs';
 import { catchError, map, take, tap } from 'rxjs/operators';
 import { CollectionEnum } from '../../../shared/enums/collection.enum';
 import { IClient } from '../models/entities/client';
@@ -8,6 +8,9 @@ import { VisitsService } from '../../visits/services/visits.service';
 import { IClientCount } from '../../../shared/models/entities/setting';
 import { SearchService } from '../../../shared/service/search.service';
 import { CLIENTS } from '../enums/clients.enum';
+import { AuthService } from '../../auth/services/auth.service';
+import firebase from 'firebase';
+import QuerySnapshot = firebase.firestore.QuerySnapshot;
 
 @Injectable()
 export class ClientsService {
@@ -25,9 +28,20 @@ export class ClientsService {
     items$: Observable<IClient[]> = this._itemsSubject.asObservable();
 
     /**
-     * Used to load clients after the last loaded client.
+     * Used to load clients after the last loaded client when going to next page OR clients from last page when going to previous page.
      */
     lastInResponse: any = null;
+    firstInResponse: any = null;
+
+    /**
+     * Disabled pagination buttons.
+     * @param clientsService
+     * @param _route
+     * @param _router
+     * @param _searchService
+     */
+    disablePrevious: boolean = true;
+    disableNext: boolean = true;
 
     /**
      * Keep count of clients.
@@ -36,11 +50,17 @@ export class ClientsService {
     private _countClientSubject: BehaviorSubject<number> = new BehaviorSubject<number>( 0 );
 
     // countClient$: Observable<number> = this._countClientSubject.asObservable();
+    sub: Subscription;
+
+    starts: any[] = [];
+    starts2: any[] = [];
+
 
     constructor(
         private store: AngularFirestore,
         private _visitService: VisitsService,
-        private _searchService: SearchService
+        private _searchService: SearchService,
+        private _auth: AuthService
     ) {
         this._getCurrentClientCountFromFirebase();
     }
@@ -49,15 +69,41 @@ export class ClientsService {
      * Load all items from Firebase.
      * @return void.
      */
-    loadBatch( searchTerm: string, reset: boolean = false ) {
+    loadBatch( searchTerm: string, reset: boolean = false, isNext: boolean = true ) {
+
+        // In app.module.ts the enablePersistence line make this call run twice for some bizzare reason.
+        // We use this variable to stop that duplicate call.
+        let allowEnablePersistenceCall: boolean = true;
+
         if ( reset ) {
             this._itemsSubject.next( [] );
             this.lastInResponse = null;
+            this.firstInResponse = null;
+            this.disablePrevious = true;
+            this.disableNext = true;
+            isNext = true;
         }
-        this.store.collection( CollectionEnum.CLIENTS, ref => {
+
+        if ( isNext ) {
+            this.firstInResponse = null;
+        } else {
+            if ( this.starts.length > 1 ) {
+                this.starts = this.starts.slice( 0, this.starts.length - 1 );
+                this.starts2 = this.starts2.slice( 0, this.starts2.length - 1 );
+            }
+            this.firstInResponse = this.starts.length === 0 ? null : this.starts[ this.starts.length - 1 ];
+            this.lastInResponse = this.starts.length === 0 ? null : this.lastInResponse;
+        }
+
+        if ( this.firstInResponse === undefined || this.lastInResponse === undefined ) {
+            return;
+        }
+
+        this.sub = this.store.collection( CollectionEnum.CLIENTS, ref => {
+            console.log('building query...');
                 let query: Query = ref;
                 if ( searchTerm !== '' ) {
-                    query = query.where( 'customerNumber', '==', searchTerm );
+                    query = query.orderBy('customerNumberStr').startAt( searchTerm ).endAt( searchTerm + '~' );
                     this._itemsSubject.next( [] );
                     this.lastInResponse = null;
                 }
@@ -65,26 +111,50 @@ export class ClientsService {
                 if ( searchTerm === '' ) {
                     query = query.orderBy( 'customerNumber', 'asc' );
                 }
-                if ( this.lastInResponse ) {
+                if ( this.firstInResponse ) {
+                    query = query.startAt( this.firstInResponse );
+                } else if ( this.lastInResponse ) {
                     query = query.startAfter( this.lastInResponse );
                 }
                 return query;
             }
         ).snapshotChanges()
             .pipe(
-                take( 1 ),
+                // take( 1 ),
                 tap( response => {
-                    if ( ! response.length ) {
-                        console.log( 'No client Data Available' );
-                        return false;
-                    }
-                    this.lastInResponse = response[ response.length - 1 ].payload.doc;
+                    if ( allowEnablePersistenceCall ) {
+                        console.log( 'running...' );
+                        if ( ! response.length ) {
+                            console.log( 'No client Data Available' );
+                            this.disableNext = true;
+                            return false;
+                        }
 
-                    const tableData: IClient[] = this._itemsSubject.value;
-                    for ( const item of response ) {
-                        tableData.push( item.payload.doc.data() as IClient );
+                        // Keeps pagination starts up-to-date.
+                        if ( isNext ) {
+                            // Second call want to add the same doc to starts so if it alredy exists then don't add it.
+                            // This help previous button to work.
+                            if ( this.starts.findIndex( item => ( item.data() as IClient ).customerNumber === (response[ 0 ].payload.doc.data() as IClient ).customerNumber ) === -1 ) {
+                                this.starts.push( response[ 0 ].payload.doc );
+                                this.starts2.push( ( response[ 0 ].payload.doc.data() as IClient ).customerNumber );
+                            }
+                        }
+                        this.lastInResponse = response[ response.length - 1 ].payload.doc;
+
+                        const tableData: IClient[] = [];
+                        for ( const item of response ) {
+                            // console.log( item.payload.doc.metadata );
+                            tableData.push( item.payload.doc.data() as IClient );
+                        }
+                        this._itemsSubject.next( tableData );
+                        // allowEnablePersistenceCall = false;
+
+                        this.disableNext = response.length < this._maxPerPage;
+                        this.disablePrevious = ! (this.starts.length > 1 );
+
+                    } else {
+                        console.log( 'Duplicate call cancelled.' );
                     }
-                    this._itemsSubject.next( tableData );
                 }, error => {
                     console.log( 'Client loadItems error', error );
                 } )
@@ -228,35 +298,18 @@ export class ClientsService {
     }
 
     /**
-     * Get current client count from Firebase.
+     * Get count of clients from Firebase.
      * @return void
      * @private
      */
     private _getCurrentClientCountFromFirebase(): void {
-        this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).valueChanges()
+        this.store.collection<IClientCount>( CollectionEnum.CLIENTS ).get()
             .pipe(
                 take( 1 ),
-                tap( ( response: IClientCount ) => {
-                    this._countClientSubject.next( response.counter );
+                tap( ( querySnapshot: QuerySnapshot ) => {
+                    this._countClientSubject.next( querySnapshot.size );
                 } )
             ).subscribe();
-    }
-
-    /**
-     * Update client count in Firebase
-     * @param value
-     */
-    private _updateClientCountInFirebase( value: number ): Observable<boolean> {
-        return from(
-            this.store.collection<IClientCount>( CollectionEnum.SETTINGS ).doc( CLIENTS.CLIENTCOUNT ).set( { counter: value } )
-                .then( () => {
-                    return Promise.resolve( true );
-                } )
-                .catch( ( error ) => {
-                    console.log( 'Client service update client count error', error );
-                    return Promise.reject( false );
-                } )
-        );
     }
 
     /**
@@ -267,7 +320,6 @@ export class ClientsService {
     private _incrementClientCount( amount: number = 1 ): void {
         const newValue: number = this.getClientCountLocally() + amount;
         this._setClientCountLocally( newValue );
-        this._updateClientCountInFirebase( newValue );
     }
 
     /**
@@ -278,7 +330,6 @@ export class ClientsService {
     private _decrementClientCount( amount: number = 1 ): void {
         const newValue: number = this.getClientCountLocally() - amount;
         this._setClientCountLocally( newValue );
-        this._updateClientCountInFirebase( newValue );
     }
 
     /**
@@ -288,7 +339,6 @@ export class ClientsService {
      */
     private _setClientCount( value: number ): void {
         this._setClientCountLocally( value );
-        this._updateClientCountInFirebase( value );
     }
 
     /**

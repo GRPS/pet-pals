@@ -71,12 +71,10 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
                         this.watchControlDtForChanges();
                         this.setEditMode();
                     } else { // Update an existing visit form.
-                        this._visitsService.getItemById( this.paramId )
+                        this._visitsService.getItemById( this.paramClientId, this.paramId )
                             .pipe(
                                 take( 1 ),
                                 tap( ( item: IVisit ) => {
-                                    // We could have been passed either 1 or 2 parameters: '/add/<clientId>' or '/<clientId>'.
-                                    this.paramClientId = this.paramClientId ? this.paramClientId : item.clientId;
                                     item.dt = item.dtYear + '-' + this.padNumber( item.dtMonth ) + '-' + this.padNumber( item.dtDate );
                                     this._createForm( item );
                                     this.watchControlDtForChanges();
@@ -202,10 +200,14 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
             foodIntakeAm: [ item ? item.foodIntakeAm : '', Validators.compose( [] ) ],
             foodIntakePm: [ item ? item.foodIntakePm : '', Validators.compose( [] ) ],
             liquidIntake: [ item ? item.liquidIntake : '', Validators.compose( [] ) ],
-            medication: [ item ? item.medication : '', Validators.compose( [] ) ],
-            name: [ item ? item.name : '', Validators.compose( [] ) ],
-            notes: [ item ? item.notes : '', Validators.compose( [] ) ],
-            securityCheck: [ item ? item.securityCheck : '', Validators.compose( [] ) ],
+            medicationAm: [ item ? item.medicationAm : '', Validators.compose( [] ) ],
+            medicationPm: [ item ? item.medicationPm : '', Validators.compose( [] ) ],
+            visitorAm: [ item ? item.visitorAm : '', Validators.compose( [] ) ],
+            visitorPm: [ item ? item.visitorPm : '', Validators.compose( [] ) ],
+            notesAm: [ item ? item.notesAm : '', Validators.compose( [] ) ],
+            notesPm: [ item ? item.notesPm : '', Validators.compose( [] ) ],
+            securityCheckAm: [ item ? item.securityCheckAm : '', Validators.compose( [] ) ],
+            securityCheckPm: [ item ? item.securityCheckPm : '', Validators.compose( [] ) ],
             visualCheckAm: [ item ? item.visualCheckAm : '', Validators.compose( [] ) ],
             visualCheckPm: [ item ? item.visualCheckPm : '', Validators.compose( [] ) ],
             checked: [ false, Validators.compose( [] ) ]

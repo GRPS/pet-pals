@@ -8,6 +8,7 @@ import { SharedComponentsModule } from '../../shared/layout/shared-components.mo
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { VisitsService } from '../visits/services/visits.service';
+import { SharedPipesModule } from '../../shared/pipes/shared-pipes.module';
 
 @NgModule( {
     declarations: [
@@ -18,6 +19,7 @@ import { VisitsService } from '../visits/services/visits.service';
         CommonModule,
         ReactiveFormsModule,
         SharedComponentsModule,
+        SharedPipesModule,
         RouterModule.forChild( [
             {
                 path: '',

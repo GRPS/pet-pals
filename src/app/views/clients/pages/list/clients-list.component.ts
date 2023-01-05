@@ -1,10 +1,11 @@
-import { ApplicationRef, Component, ComponentFactoryResolver, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IClient } from '../../models/entities/client';
 import { ClientsService } from '../../services/clients.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SearchService } from '../../../../shared/service/search.service';
 import { skip, takeUntil, tap } from 'rxjs/operators';
+import { AlertService } from '../../../../shared/service/alert.service';
 
 @Component( {
     selector: 'app-clients-list',
@@ -26,9 +27,10 @@ export class ClientsListComponent implements OnInit, OnDestroy {
         public clientsService: ClientsService,
         private _route: ActivatedRoute,
         private _router: Router,
-        private _searchService: SearchService
+        private _searchService: SearchService,
+        private _alertService: AlertService
     ) {
-        if ( !clientsService.areClientsLoaded() ) {
+        if ( ! clientsService.areClientsLoaded() ) {
             this.clientsService.loadBatch( this.searchTerm, true );
         }
         this._searchService.showSearch();
@@ -42,7 +44,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
                 takeUntil( this._unsubscribeAll ),
                 skip( 1 ),
                 tap( ( searchTerm: string ) => {
-                    console.log('Search: ' + searchTerm );
+                    console.log( 'Search: ' + searchTerm );
                     this.searchTerm = searchTerm;
                     this.clientsService.loadBatch( searchTerm, true );
                 } )
@@ -63,8 +65,8 @@ export class ClientsListComponent implements OnInit, OnDestroy {
      * Load next batch of clients.
      * @return void
      */
-    nextBatch(): void {
-        this.clientsService.loadBatch( this.searchTerm );
+    nextBatch( isNext: boolean = true ): void {
+        this.clientsService.loadBatch( this.searchTerm, false, isNext );
     }
 
     /**
@@ -78,7 +80,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             .then( ( succeeded: boolean ) => {
             } )
             .catch( error => {
-                console.log('Navigate from client list to open existing client', error);
+                console.log( 'Navigate from client list to open existing client', error );
             } );
     }
 
@@ -93,7 +95,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             .then( ( succeeded: boolean ) => {
             } )
             .catch( error => {
-                console.log('Navigate from client list to new client error', error);
+                console.log( 'Navigate from client list to new client error', error );
             } );
     }
 
@@ -104,28 +106,32 @@ export class ClientsListComponent implements OnInit, OnDestroy {
     dummyData(): void {
         const currentClientCount: number = this.clientsService.getClientCountLocally();
         for ( let i = 1; i <= this.clientsService.getMaxPerPage(); i++ ) {
+            const newIndex: number = 1000 + currentClientCount + i;
             const item: IClient = {
                 id: '',
-                address: 'Dummy A ',
                 emailAddress: 'Dummy',
                 securedIndoors: 'Dummy A ',
-                customerNumber: 'Dummy CN ',
+                customerNumber: null,
+                customerNumberStr: null,
                 feedingRoutine: 'Dunny fr ',
                 health: 'Dummy h ',
                 name: ' Dummy n ',
                 other: 'Dummy o ',
+                litter: 'Dummy l ',
                 petName: 'Dummy'
             };
-            item.address += i;
-            item.emailAddress += i;
-            item.securedIndoors += i;
-            item.customerNumber += i;
-            item.feedingRoutine += i;
-            item.health += i;
-            item.name += i;
-            item.other += i;
-            this.clientsService.addItem( item );//, i === this.clientsService.getMaxPerPage() );
+            item.emailAddress += newIndex;
+            item.securedIndoors += newIndex;
+            item.customerNumber = newIndex;
+            item.customerNumberStr = newIndex.toString();
+            item.feedingRoutine += newIndex;
+            item.health += newIndex;
+            item.name += newIndex;
+            item.other += newIndex;
+            item.litter += newIndex;
+            this.clientsService.addItem( item );
         }
+        this._alertService.toast( 'Please reload site!', 'warning', 3000 );
     }
 
     /**
@@ -136,7 +142,7 @@ export class ClientsListComponent implements OnInit, OnDestroy {
         this.clientsService.getDummyData()
             .pipe(
                 tap( ( items: IClient[] ) => {
-                    console.log(' Deleting dummy count: ' + items.length );
+                    console.log( ' Deleting dummy count: ' + items.length );
                     items.forEach( ( item: IClient, index ) => {
                         this.clientsService.deleteDummy( item );
                     } );

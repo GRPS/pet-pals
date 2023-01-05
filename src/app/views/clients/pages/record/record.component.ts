@@ -123,6 +123,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
         const item: IClient = this.form.value;
         if ( this.form.valid ) {
             if ( this.isNew ) {
+                item.customerNumberStr = item.customerNumber.toString();
                 this._clientsService.addItem( item )
                     .pipe(
                         take( 1 ),
@@ -192,15 +193,16 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
     private _createForm( item: IClient = null ): void {
         this.form = this.formBuilder.group( {
             id: [ item ? item.id : '', Validators.compose( [] ) ],
-            address: [ item ? item.address : '', Validators.compose( [] ) ],
             securedIndoors: [ item ? item.securedIndoors : '', Validators.compose( [] ) ],
             customerNumber: [ item ? item.customerNumber : '', Validators.compose( [ Validators.required ] ) ],
+            customerNumberStr: [ item ? item.customerNumberStr : '', Validators.compose( [] ) ],
             feedingRoutine: [ item ? item.feedingRoutine : '', Validators.compose( [] ) ],
             health: [ item ? item.health : '', Validators.compose( [] ) ],
             name: [ item ? item.name : '', Validators.compose( [ Validators.required ] ) ],
             other: [ item ? item.other : '', Validators.compose( [] ) ],
             petName: [ item ? item.petName : '', Validators.compose( [ Validators.required ] ) ],
-            emailAddress: [ item ? item.emailAddress : '', Validators.compose( [ Validators.required ] ) ]
+            emailAddress: [ item ? item.emailAddress : '', Validators.compose( [ Validators.required ] ) ],
+            litter: [ item ? item.litter : '', Validators.compose( [] ) ]
         } );
     }
 

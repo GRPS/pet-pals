@@ -33,7 +33,7 @@ import { ReactiveFormsModule } from '@angular/forms';
                 component: RecordComponent
             },
             {
-                path: ':id',
+                path: ':clientId/:id',
                 canDeactivate: [ CanDeactivateGuard ],
                 component: RecordComponent
             }

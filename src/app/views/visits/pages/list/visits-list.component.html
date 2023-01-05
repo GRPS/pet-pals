@@ -12,7 +12,7 @@
             <tr>
                 <th></th>
                 <th>Date</th>
-                <th>Name</th>
+                <th>Visitors</th>
                 <th>Notes</th>
             </tr>
             </thead>
@@ -20,8 +20,8 @@
             <tr *ngFor="let item of items; let i=index;">
                 <td><input type="checkbox" value="{{ item.id }}" (click)="toggleCheckedItem(item)"></td>
                 <td (click)="open(item, $event)">{{ item.dt | date:'E, dd LLL yyyy' }}</td>
-                <td (click)="open(item, $event)">{{ item.name }}</td>
-                <td (click)="open(item, $event)" style="white-space: break-spaces;">{{ item.notes }}</td>
+                <td (click)="open(item, $event)">{{ item.visitorAm }}<br>{{ item.visitorPm }}</td>
+                <td (click)="open(item, $event)" style="white-space: break-spaces;">{{ item.notesAm }}<br>{{ item.notesPm }}</td>
             </tr>
             </tbody>
         </table>
