@@ -7,6 +7,9 @@ import { AlertService } from '../../../shared/service/alert.service';
 @Injectable()
 export class AuthService {
 
+    sessionKey: string = 'petpals';
+    sessionAuthenticated: string = 'authenticated';
+
     /**
      * Used to determine if user is logged in.
      * @private
@@ -20,7 +23,8 @@ export class AuthService {
         private angularFireAuth: AngularFireAuth,
         private _router: Router,
         private _alertService: AlertService
-        ) {
+    ) {
+        this._isAuthenticated = this.checkIfSessionIsAuthenticated();
     }
 
     /**
@@ -32,17 +36,18 @@ export class AuthService {
     signIn( email: string, password: string ): Observable<boolean> {
         return from(
             this.angularFireAuth.signInWithEmailAndPassword( email, password )
-            .then( res => {
-                this._isAuthenticated = true;
-                this._errorsSubject.next( null );
-                // console.log( 'You are Successfully logged in!', res );
-                return Promise.resolve( true );
-            } )
-            .catch( err => {
-                this._errorsSubject.next( err.message );
-                // console.log( 'Something is wrong:', err.message );
-                return Promise.reject( false );
-            } )
+                .then( res => {
+                    this.setAuthenticated();
+                    this._errorsSubject.next( null );
+                    // console.log( 'You are Successfully logged in!', res );
+                    return Promise.resolve( true );
+                } )
+                .catch( err => {
+                    this.clearAuthentication();
+                    this._errorsSubject.next( err.message );
+                    // console.log( 'Something is wrong:', err.message );
+                    return Promise.reject( false );
+                } )
         );
     }
 
@@ -53,7 +58,7 @@ export class AuthService {
     signOut(): void {
         this.angularFireAuth.signOut()
             .then( res => {
-                this._isAuthenticated = false;
+                this.clearAuthentication();
                 this._router.navigate( [ '/' ] );
                 // console.log( 'You are Successfully logged out!' );
             } )
@@ -63,11 +68,37 @@ export class AuthService {
     }
 
     /**
-     * Return is user is logged in
-     * @return boolean as to the success of login.
+     * Is user authenticated.
+     * @return boolean as to the user being authenticated.
      */
     isUserAuthenticated(): boolean {
         return this._isAuthenticated;
+    }
+
+    /**
+     * Set session value. We are authenticated.
+     * @return void
+     */
+    setAuthenticated(): void {
+        this._isAuthenticated = true;
+        sessionStorage.setItem( this.sessionKey, this.sessionAuthenticated );
+    }
+
+    /**
+     * Delete session value. We are not authenticated.
+     * @return void
+     */
+    clearAuthentication(): void {
+        this._isAuthenticated = false;
+        sessionStorage.removeItem( this.sessionKey );
+    }
+
+    /**
+     * Is the session storage authenticated?
+     * @return boolean are we?
+     */
+    checkIfSessionIsAuthenticated(): boolean {
+        return sessionStorage.getItem( this.sessionKey ) === this.sessionAuthenticated;
     }
 
 }
