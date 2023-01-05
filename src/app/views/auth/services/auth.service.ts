@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { AlertService } from '../../../shared/service/alert.service';
 

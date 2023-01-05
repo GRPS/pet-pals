@@ -24,8 +24,7 @@ import { AuthGuard } from './views/auth/services/auth-gaurd.service';
         ReactiveFormsModule,
         AppRoutingModule,
         AngularFireModule.initializeApp( environment.firebase, 'petpals' ),
-        AngularFirestoreModule.enablePersistence(),
-        AngularFirestoreModule,
+        AngularFirestoreModule.enablePersistence()
     ],
     providers: [
         AlertService,

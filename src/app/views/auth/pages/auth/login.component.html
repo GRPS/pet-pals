@@ -1,0 +1,29 @@
+<div class="container">
+    <div class="card col-sm-12 col-md-6">
+        <h4 class="card-header">
+            <img src="/assets/images/pet-pal-logo.png" alt="petpals logo" height="50" class="d-inline-block align-text-top">
+        </h4>
+        <div class="card-body">
+            <form [formGroup]="form" (ngSubmit)="onLogin()">
+
+                <div class="alert alert-danger" role="alert" *ngIf="authService.errors$ | async as errors">
+                    {{ errors }}
+                </div>
+
+                <p>Welcome to Petpals Basingstoke.</p>
+
+                <app-field forValue="username" label="Email Address">
+                    <input type="text" class="form-control" formControlName="username" id="username">
+                </app-field>
+
+                <app-field forValue="password" label="Password">
+                    <input type="password" class="form-control" formControlName="password" id="password" autocomplete="on">
+                </app-field>
+
+                <div class="form-group d-grid gap-2">
+                    <button class="btn btn-primary btn-block btn-sm">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

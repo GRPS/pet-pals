@@ -7,8 +7,8 @@ import { IClient } from '../models/entities/client';
 import { VisitsService } from '../../visits/services/visits.service';
 import { IClientCount } from '../../../shared/models/entities/setting';
 import { SearchService } from '../../../shared/service/search.service';
-import { CLIENTS } from '../enums/clients.enum';
 import { AuthService } from '../../auth/services/auth.service';
+
 import firebase from 'firebase';
 import QuerySnapshot = firebase.firestore.QuerySnapshot;
 
@@ -100,10 +100,9 @@ export class ClientsService {
         }
 
         this.sub = this.store.collection( CollectionEnum.CLIENTS, ref => {
-            console.log('building query...');
                 let query: Query = ref;
                 if ( searchTerm !== '' ) {
-                    query = query.orderBy('customerNumberStr').startAt( searchTerm ).endAt( searchTerm + '~' );
+                    query = query.orderBy( 'customerNumberStr' ).startAt( searchTerm ).endAt( searchTerm + '~' );
                     this._itemsSubject.next( [] );
                     this.lastInResponse = null;
                 }
@@ -123,7 +122,6 @@ export class ClientsService {
                 // take( 1 ),
                 tap( response => {
                     if ( allowEnablePersistenceCall ) {
-                        console.log( 'running...' );
                         if ( ! response.length ) {
                             console.log( 'No client Data Available' );
                             this.disableNext = true;
@@ -134,7 +132,7 @@ export class ClientsService {
                         if ( isNext ) {
                             // Second call want to add the same doc to starts so if it alredy exists then don't add it.
                             // This help previous button to work.
-                            if ( this.starts.findIndex( item => ( item.data() as IClient ).customerNumber === (response[ 0 ].payload.doc.data() as IClient ).customerNumber ) === -1 ) {
+                            if ( this.starts.findIndex( item => ( item.data() as IClient ).customerNumber === ( response[ 0 ].payload.doc.data() as IClient ).customerNumber ) === -1 ) {
                                 this.starts.push( response[ 0 ].payload.doc );
                                 this.starts2.push( ( response[ 0 ].payload.doc.data() as IClient ).customerNumber );
                             }
@@ -150,7 +148,7 @@ export class ClientsService {
                         // allowEnablePersistenceCall = false;
 
                         this.disableNext = response.length < this._maxPerPage;
-                        this.disablePrevious = ! (this.starts.length > 1 );
+                        this.disablePrevious = ! ( this.starts.length > 1 );
 
                     } else {
                         console.log( 'Duplicate call cancelled.' );

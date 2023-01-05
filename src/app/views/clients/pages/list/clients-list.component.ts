@@ -20,7 +20,9 @@ export class ClientsListComponent implements OnInit, OnDestroy {
      */
     private _unsubscribeAll = new Subject();
 
-    // Used for nextBatch
+    /**
+     * Used to search.
+     */
     searchTerm: string = '';
 
     constructor(

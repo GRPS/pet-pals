@@ -1,0 +1,13 @@
+.container {
+    background-image: url('src/assets/images/pet-pal-logo-greyscale.png');
+    background-repeat: repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+    h4 {
+        text-align: center;
+    }
+}
