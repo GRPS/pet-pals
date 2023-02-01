@@ -136,6 +136,8 @@ export class VisitsListComponent implements OnInit, OnDestroy {
             let data: string = '';
             checkedItems.forEach( ( item: IVisit ) => data +=
                 'Date: ' + this._datepipe.transform( item.dt, 'EEEE, dd MMMM yyyy' ) + '\n' +
+                'Notes AM: ' + ( item.notesAm ? item.notesAm : '' ) + '\n' +
+                'Notes PM: ' + ( item.notesPm ? item.notesPm : '' ) + '\n' +
                 'Visual Check AM: ' + ( item.visualCheckAm ? item.visualCheckAm : '' ) + '\n' +
                 'Visual Check PM: ' + ( item.visualCheckPm ? item.visualCheckPm : '' ) + '\n' +
                 'Food Intake AM: ' + ( item.foodIntakeAm ? item.foodIntakeAm : '' ) + '\n' +
@@ -143,9 +145,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
                 'Medication AM: ' + ( item.medicationAm ? item.medicationAm : '' ) + '\n' +
                 'Medication PM: ' + ( item.medicationPm ? item.medicationPm : '' ) + '\n' +
                 'Security Check AM: ' + ( item.securityCheckAm ? item.securityCheckAm : '' ) + '\n' +
-                'Security Check PM: ' + ( item.securityCheckPm ? item.securityCheckPm : '' ) + '\n' +
-                'Notes AM: ' + ( item.notesAm ? item.notesAm : '' ) + '\n\n\n' +
-                'Notes PM: ' + ( item.notesPm ? item.notesPm : '' ) + '\n\n\n'
+                'Security Check PM: ' + ( item.securityCheckPm ? item.securityCheckPm : '' ) + '\n\n\n'
             );
 
             this._clipboardService.add( data );

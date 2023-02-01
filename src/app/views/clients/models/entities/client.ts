@@ -10,7 +10,6 @@ export interface IClient {
     name: string;
     other: string;
     petName: string;
-    emailAddress: string;
     litter: string;
 }
 

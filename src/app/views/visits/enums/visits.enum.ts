@@ -1,7 +1,8 @@
 export enum VISITS {
     ID = 'id',
     CLIENTID = 'clientId',
-    NAME = 'name',
+    VISITORAM = 'visitorAm',
+    VISITORPM = 'visitorPm',
     DT = 'dt',
     DTDATE = 'dtDate',
     DTMONTH = 'dtMonth',

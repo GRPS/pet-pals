@@ -20,10 +20,6 @@
         <input type="text" class="form-control" formControlName="name" id="name" *ngIf="isEditMode">
     </app-field>
 
-    <app-field forValue="emailAddress" label="Email Address *" [readValue]="form.get('emailAddress').value" [isReadMode]="!isEditMode">
-        <input type="text" class="form-control" formControlName="emailAddress" id="emailAddress" *ngIf="isEditMode">
-    </app-field>
-
     <app-field forValue="petName" label="Pet Name *" [readValue]="form.get('petName').value" [isReadMode]="!isEditMode">
         <input type="text" class="form-control" formControlName="petName" id="petName" *ngIf="isEditMode">
     </app-field>

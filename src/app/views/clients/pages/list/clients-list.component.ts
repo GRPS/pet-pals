@@ -118,7 +118,6 @@ export class ClientsListComponent implements OnInit, OnDestroy {
             const newIndex: number = 1000 + currentClientCount + i;
             const item: IClient = {
                 id: '',
-                emailAddress: 'Dummy',
                 securedIndoors: 'Dummy A ',
                 customerNumber: null,
                 customerNumberStr: null,
@@ -129,7 +128,6 @@ export class ClientsListComponent implements OnInit, OnDestroy {
                 litter: 'Dummy l ',
                 petName: 'Dummy'
             };
-            item.emailAddress += newIndex;
             item.securedIndoors += newIndex;
             item.customerNumber = newIndex;
             item.customerNumberStr = newIndex.toString();

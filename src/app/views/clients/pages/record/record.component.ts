@@ -201,7 +201,6 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
             name: [ item ? item.name : '', Validators.compose( [ Validators.required ] ) ],
             other: [ item ? item.other : '', Validators.compose( [] ) ],
             petName: [ item ? item.petName : '', Validators.compose( [ Validators.required ] ) ],
-            emailAddress: [ item ? item.emailAddress : '', Validators.compose( [ Validators.required ] ) ],
             litter: [ item ? item.litter : '', Validators.compose( [] ) ]
         } );
     }
