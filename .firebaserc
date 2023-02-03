@@ -1,4 +1,7 @@
 {
+  "projects": {
+    "pet-pals": "petpals-be1ba"
+  },
   "targets": {
     "petpals-be1ba": {
       "hosting": {
@@ -7,5 +10,6 @@
         ]
       }
     }
-  }
+  },
+  "etags": {}
 }
