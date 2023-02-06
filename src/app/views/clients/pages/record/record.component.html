@@ -46,7 +46,7 @@
 
     <div *ngIf="!isEditMode" class="form-bottom-buttons">
         <div>
-            <button type="button" class="btn btn-danger btn-sm" (click)="delete()" *ngIf="!isNew">Delete <i class="bi bi-trash"></i></button>
+            <button type="button" class="btn btn-danger btn-sm" (click)="delete()" *ngIf="!isNew"><i class="bi bi-trash"></i></button>
         </div>
         <div>
             <button type="button" class="btn btn-warning btn-sm" (click)="visits()">Visits <i class="bi bi-list"></i></button>
@@ -63,9 +63,5 @@
             <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Cancel <i class="bi bi-x-lg"></i></button>
         </div>
     </div>
-
-<!--    <div class="text-end mb-4">-->
-<!--        <button type="button" class="btn btn-danger btn-sm" (click)="delete()" *ngIf="!isNew">Delete</button>-->
-<!--    </div>-->
 
 </form>
