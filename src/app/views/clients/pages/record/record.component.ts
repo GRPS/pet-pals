@@ -123,7 +123,6 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
         const item: IClient = this.form.value;
         if ( this.form.valid ) {
             if ( this.isNew ) {
-                item.customerNumberStr = item.customerNumber.toString();
                 this._clientsService.addItem( item )
                     .pipe(
                         take( 1 ),
@@ -195,7 +194,6 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
             id: [ item ? item.id : '', Validators.compose( [] ) ],
             securedIndoors: [ item ? item.securedIndoors : '', Validators.compose( [] ) ],
             customerNumber: [ item ? item.customerNumber : '', Validators.compose( [ Validators.required ] ) ],
-            customerNumberStr: [ item ? item.customerNumberStr : '', Validators.compose( [] ) ],
             feedingRoutine: [ item ? item.feedingRoutine : '', Validators.compose( [] ) ],
             health: [ item ? item.health : '', Validators.compose( [] ) ],
             name: [ item ? item.name : '', Validators.compose( [ Validators.required ] ) ],

@@ -109,3 +109,17 @@ button:disabled {
 .text-green {
     color: #68B34D;
 }
+
+.form-bottom-buttons {
+    display: flex;
+    @extend .mt-4;
+    div {
+        &:first-child {
+            width: 25%;
+        }
+        &:last-child {
+            width: 75%;
+            text-align: end;
+        }
+    }
+}

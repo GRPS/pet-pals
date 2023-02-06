@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { SearchService } from '../../../../shared/service/search.service';
-import { takeUntil, tap } from 'rxjs/operators';
+import { take, takeUntil, tap } from 'rxjs/operators';
 import { VisitsService } from '../../services/visits.service';
 import { IVisit } from '../../models/entities/visits';
 import { VISITS } from '../../enums/visits.enum';
@@ -175,7 +175,7 @@ export class VisitsListComponent implements OnInit, OnDestroy {
         let turnOn: boolean = false;
         const newVisits: IVisit[] = visits.map( ( visit: IVisit ) => {
             if ( visit.checked ) {
-                turnOn = !turnOn;
+                turnOn = ! turnOn;
             }
             if ( turnOn ) {
                 visit.checked = true;
@@ -183,6 +183,33 @@ export class VisitsListComponent implements OnInit, OnDestroy {
             return visit;
         } );
         this._itemsSubject.next( newVisits );
+    }
+
+    deleteSelected() {
+        const checkedItems: IVisit[] = this.visitsService.getCheckedVisits();
+
+        if ( checkedItems.length === 0 ) {
+            return;
+        }
+
+        this._alertService.areYouSure( 'Delete ' + checkedItems.length + ' Selected Visits?', 'Are you sure?' )
+            .then( ( response: boolean ) => {
+                if ( response ) {
+                    const currentItems: IVisit[] = this._itemsSubject.value;
+                    const differenceItems = currentItems.filter( function( objOne: IVisit ) {
+                        return ! checkedItems.some( function( objTwo: IVisit ) {
+                            return objOne.id == objTwo.id;
+                        } );
+                    } );
+
+                    checkedItems.forEach( ( item: IVisit ) => {
+                        this.visitsService.deleteItemSimple( item );
+                    } );
+
+                    this._itemsSubject.next( differenceItems );
+                    this._alertService.toast( 'Selected Visits deleted!' );
+                }
+            } );
     }
 
 }

@@ -3,8 +3,7 @@ import { IVisit } from '../../../visits/models/entities/visits';
 export interface IClient {
     id: string;
     securedIndoors: string;
-    customerNumber: number; // Searching seems to work better on a string datatype.
-    customerNumberStr: string;
+    customerNumber: string;
     feedingRoutine: string;
     health: string;
     name: string;

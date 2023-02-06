@@ -105,7 +105,7 @@ export class ClientsService {
         this.sub = this.store.collection( CollectionEnum.CLIENTS, ref => {
                 let query: Query = ref;
                 if ( searchTerm !== '' ) {
-                    query = query.orderBy( 'customerNumberStr' ).startAt( searchTerm ).endAt( searchTerm + '~' );
+                    query = query.orderBy( 'customerNumber' ).startAt( searchTerm ).endAt( searchTerm + '~' );
                     this._itemsSubject.next( [] );
                     this.lastInResponse = null;
                 }

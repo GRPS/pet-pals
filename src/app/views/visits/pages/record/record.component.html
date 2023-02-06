@@ -63,8 +63,23 @@
         <textarea rows="5" class="form-control" formControlName="notesPm" id="notesPm" *ngIf="isEditMode"></textarea>
     </app-field>
 
-    <div class="text-end mb-4">
-        <button type="button" class="btn btn-danger btn-sm" (click)="delete()" *ngIf="!isNew">Delete</button>
+    <div *ngIf="!isEditMode" class="form-bottom-buttons">
+        <div>
+            <button type="button" class="btn btn-danger btn-sm" (click)="delete()" *ngIf="!isNew">Delete</button>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary btn-sm ml-2" (click)="setEditMode()">Edit <i class="bi bi-pencil"></i></button>
+            <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
+        </div>
+    </div>
+    <div *ngIf="isEditMode" class="form-bottom-buttons">
+        <div>
+
+        </div>
+        <div>
+            <button type="button" class="btn btn-success btn-sm" (click)="onSubmit()" [disabled]="formNoValid">Save <i class="bi bi-check2"></i></button>
+            <button type="button" class="btn btn-secondary btn-sm ml-2" (click)="back()">Cancel <i class="bi bi-x-lg"></i></button>
+        </div>
     </div>
 
 </form>

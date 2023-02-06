@@ -164,6 +164,22 @@ export class VisitsService {
     }
 
     /**
+     * Delete visit item from Firebase
+     * @param item
+     */
+    deleteItemSimple( item: IVisit ): void {
+        from( this.store.collection<IClient>( CollectionEnum.CLIENTS ).doc( item.clientId ).collection<IVisit>( CollectionEnum.VISITS ).doc( item.id ).delete()
+            .then( () => {
+                // console.log( 'Deleted: ' + item.id );
+            } )
+            .catch( ( error ) => {
+                console.log( 'Visit service delete item simply error', error );
+                return false;
+            } )
+        );
+    }
+
+    /**
      * Get a document by its id from teh relevant client.
      * @param clientId string
      * @param docId string

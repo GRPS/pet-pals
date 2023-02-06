@@ -108,55 +108,53 @@ export class ClientsListComponent implements OnInit, OnDestroy {
         this.clientsService.export();
     }
 
-    /**
-     * Add dummy data.
-     * @return void.
-     */
-    dummyData(): void {
-        const currentClientCount: number = this.clientsService.getClientCountLocally();
-        for ( let i = 1; i <= this.clientsService.getMaxPerPage(); i++ ) {
-            const newIndex: number = 1000 + currentClientCount + i;
-            const item: IClient = {
-                id: '',
-                securedIndoors: 'Dummy A ',
-                customerNumber: null,
-                customerNumberStr: null,
-                feedingRoutine: 'Dunny fr ',
-                health: 'Dummy h ',
-                name: ' Dummy n ',
-                other: 'Dummy o ',
-                litter: 'Dummy l ',
-                petName: 'Dummy'
-            };
-            item.securedIndoors += newIndex;
-            item.customerNumber = newIndex;
-            item.customerNumberStr = newIndex.toString();
-            item.feedingRoutine += newIndex;
-            item.health += newIndex;
-            item.name += newIndex;
-            item.other += newIndex;
-            item.litter += newIndex;
-            this.clientsService.addItem( item );
-        }
-        this._alertService.toast( 'Please reload site!', 'warning', 3000 );
-    }
-
-    /**
-     * Delete all dummy data.
-     * @return void
-     */
-    dummyDataDelete(): void {
-        this.clientsService.getDummyData()
-            .pipe(
-                tap( ( items: IClient[] ) => {
-                    console.log( ' Deleting dummy count: ' + items.length );
-                    items.forEach( ( item: IClient, index ) => {
-                        this.clientsService.deleteDummy( item );
-                    } );
-                    const newItems: IClient[] = this.clientsService.getClients().filter( ( item: IClient ) => item.petName != 'Dummy' );
-                    this.clientsService.setClients( newItems );
-                } )
-            ).subscribe();
-    }
+    // /**
+    //  * Add dummy data.
+    //  * @return void.
+    //  */
+    // dummyData(): void {
+    //     const currentClientCount: number = this.clientsService.getClientCountLocally();
+    //     for ( let i = 1; i <= this.clientsService.getMaxPerPage(); i++ ) {
+    //         const newIndex: number = 1000 + currentClientCount + i;
+    //         const item: IClient = {
+    //             id: '',
+    //             securedIndoors: 'Dummy A ',
+    //             customerNumber: null,
+    //             feedingRoutine: 'Dunny fr ',
+    //             health: 'Dummy h ',
+    //             name: ' Dummy n ',
+    //             other: 'Dummy o ',
+    //             litter: 'Dummy l ',
+    //             petName: 'Dummy'
+    //         };
+    //         item.securedIndoors += newIndex;
+    //         item.customerNumber = newIndex.toString();
+    //         item.feedingRoutine += newIndex;
+    //         item.health += newIndex;
+    //         item.name += newIndex;
+    //         item.other += newIndex;
+    //         item.litter += newIndex;
+    //         this.clientsService.addItem( item );
+    //     }
+    //     this._alertService.toast( 'Please reload site!', 'warning', 3000 );
+    // }
+    //
+    // /**
+    //  * Delete all dummy data.
+    //  * @return void
+    //  */
+    // dummyDataDelete(): void {
+    //     this.clientsService.getDummyData()
+    //         .pipe(
+    //             tap( ( items: IClient[] ) => {
+    //                 console.log( ' Deleting dummy count: ' + items.length );
+    //                 items.forEach( ( item: IClient, index ) => {
+    //                     this.clientsService.deleteDummy( item );
+    //                 } );
+    //                 const newItems: IClient[] = this.clientsService.getClients().filter( ( item: IClient ) => item.petName != 'Dummy' );
+    //                 this.clientsService.setClients( newItems );
+    //             } )
+    //         ).subscribe();
+    // }
 
 }
