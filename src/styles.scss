@@ -113,6 +113,7 @@ button:disabled {
 .form-bottom-buttons {
     display: flex;
     @extend .mt-4;
+    @extend .mb-2;
     div {
         &:first-child {
             width: 25%;

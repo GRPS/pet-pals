@@ -1,7 +1,6 @@
 <ng-container *ngIf="clientsService.items$ | async as items">
 
     <app-header title="Clients" [badge]="clientsService.getClientCountLocally().toString()">
-        <button type="button" class="btn btn-warning btn-sm mr-2 mb-4" (click)="export()">Backup <i class="bi bi-save"></i></button>
         <button type="button" class="btn btn-info btn-sm ml-2 mb-4" routerLink="/clients/add">Add <i class="bi bi-plus"></i></button>
     </app-header>
 
@@ -30,11 +29,17 @@
         </table>
     </div>
 
+    <div class="form-bottom-buttons">
+        <div>
+
+        </div>
+        <div>
+            <button type="button" class="btn btn-warning btn-sm mr-2 mb-4" (click)="export()">Backup <i class="bi bi-save"></i></button>
+        </div>
+    </div>
+
 </ng-container>
 
-<!--<hr>-->
-<!--<button type="button" class="btn btn-link mr-2" (click)="dummyData()">Add Dummy Data</button>-->
-<!--<button type="button" class="btn btn-link" (click)="dummyDataDelete()">Delete Dummy Data</button>-->
 
 <ng-template #loading>
     <div class="spinner-border text-green" role="status"></div>

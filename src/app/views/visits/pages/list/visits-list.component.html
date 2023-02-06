@@ -1,7 +1,6 @@
 <ng-container *ngIf="(items$ | async) as items">
 
     <app-header [title]="visitsService.getIsAllVisits()? 'All Visits' : 'Client Visits'">
-        <button type="button" class="btn btn-warning btn-sm mr-2 mb-4" (click)="export()">Export <i class="bi bi-save"></i></button>
         <button type="button" class="btn btn-info btn-sm mb-4" (click)="add()" *ngIf="!visitsService.getIsAllVisits()">Add <i class="bi bi-plus"></i></button>
         <button type="button" class="btn btn-secondary btn-sm ml-2 mb-4" (click)="back()">Back <i class="bi bi-x-lg"></i></button>
     </app-header>
@@ -35,10 +34,10 @@
 
     <div class="form-bottom-buttons">
         <div>
-            <button type="button" class="btn btn-danger btn-sm" (click)="deleteSelected()">Delete Selected</button>
+            <button type="button" class="btn btn-danger btn-sm" (click)="deleteSelected()">Delete Selected <i class="bi bi-trash"></i></button>
         </div>
         <div>
-
+            <button type="button" class="btn btn-warning btn-sm mr-2 mb-4" (click)="export()">Export <i class="bi bi-save"></i></button>
         </div>
     </div>
 
