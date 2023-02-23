@@ -4,6 +4,7 @@ export interface IClient {
     id: string;
     securedIndoors: string;
     customerNumber: string;
+    customerNumberDigits: number;
     feedingRoutine: string;
     health: string;
     name: string;

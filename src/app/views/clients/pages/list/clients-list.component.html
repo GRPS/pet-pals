@@ -1,6 +1,13 @@
 <ng-container *ngIf="clientsService.items$ | async as items">
 
-    <app-header title="Clients" [badge]="clientsService.getClientCountLocally().toString()">
+    <div id="loading" *ngIf="clientsService.waitMessage$ | async as message">
+        <span class="spinner-border text-info" role="status">
+            <span class="visually-hidden"></span>
+        </span>
+        <div>{{ message }}</div>
+    </div>
+
+    <app-header title="Clients" [subTitle]="whichEnvironment" [badge]="clientsService.getClientCountLocally().toString()">
         <button type="button" class="btn btn-info btn-sm ml-2 mb-4" routerLink="/clients/add">Add <i class="bi bi-plus"></i></button>
     </app-header>
 
@@ -29,13 +36,10 @@
         </table>
     </div>
 
-    <div class="form-bottom-buttons">
-        <div>
-
-        </div>
-        <div>
-            <button type="button" class="btn btn-warning btn-sm mr-2 mb-4" (click)="export()">Backup <i class="bi bi-save"></i></button>
-        </div>
+    <div class="mt-4 mb-2">
+        <button type="button" class="btn btn-sm btn-light mr-4" (click)="exportText()">Export as Text</button>
+        <button type="button" class="btn btn-sm btn-light mr-4" (click)="exportData()">Backup</button>
+        <button type="button" class="btn btn-sm btn-light" (click)="import()">Restore</button>
     </div>
 
 </ng-container>

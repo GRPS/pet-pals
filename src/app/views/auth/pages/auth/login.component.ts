@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { AuthService } from '../../services/auth.service';
 import { take, tap } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
 
 @Component( {
     selector: 'app-auth-login',
@@ -11,6 +12,10 @@ import { take, tap } from 'rxjs/operators';
     styleUrls: [ './login.component.scss' ]
 } )
 export class LoginComponent implements OnInit {
+
+    whichEnvironment: string = environment.loginWelcomeMessage;
+    whichEnvironmentColour: string = environment.loginWelcomeMessagecolor;
+    ver: string = environment.ver;
 
     form: FormGroup;
     submitted: boolean = false;

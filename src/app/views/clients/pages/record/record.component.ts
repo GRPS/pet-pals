@@ -121,6 +121,7 @@ export class RecordComponent implements OnInit, OnDestroy, CanComponentDeactivat
      */
     onSubmit(): void {
         const item: IClient = this.form.value;
+        item.customerNumberDigits = this._clientsService.getCustomerNumberDigits( item.customerNumber );
         if ( this.form.valid ) {
             if ( this.isNew ) {
                 this._clientsService.addItem( item )

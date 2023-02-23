@@ -14,7 +14,24 @@ export class AlertService {
             title,
             html,
             icon,
-    ).then( ( result ) => {} )
+        ).then( ( result ) => {
+        } );
+    }
+
+    prompt( title: string, html: string = '' ): Promise<string> {
+        return Swal.fire( {
+            title,
+            html,
+            input: 'textarea',
+            showCancelButton: true,
+            showConfirmButton: true
+        } ).then( function( result ) {
+            if ( result.isConfirmed ) {
+                return result.value;
+            } else {
+                return null;
+            }
+        } );
     }
 
     /**
@@ -30,16 +47,18 @@ export class AlertService {
             buttonsStyling: false
         } ).fire( {
             title,
-            html,
+            html: '<small>' + html + '</small>',
             icon,
             showCancelButton,
             confirmButtonText,
             cancelButtonText: 'No',
             reverseButtons: true
         } ).then( ( result ) => {
-            if(result.value){
+            if ( result.value ) {
                 return result.isConfirmed;
-                setTimeout(function(){ Swal.close();  }, 1000);
+                setTimeout( function() {
+                    Swal.close();
+                }, 1000 );
             }
             return result.isConfirmed;
         } );

@@ -136,6 +136,8 @@ export class VisitsListComponent implements OnInit, OnDestroy {
             let data: string = '';
             checkedItems.forEach( ( item: IVisit ) => data +=
                 'Date: ' + this._datepipe.transform( item.dt, 'EEEE, dd MMMM yyyy' ) + '\n' +
+                'Visitor AM: ' + ( item.visitorAm ? item.visitorAm : '' ) + '\n' +
+                'Visitor PM: ' + ( item.visitorPm ? item.visitorPm : '' ) + '\n' +
                 'Notes AM: ' + ( item.notesAm ? item.notesAm : '' ) + '\n' +
                 'Notes PM: ' + ( item.notesPm ? item.notesPm : '' ) + '\n' +
                 'Visual Check AM: ' + ( item.visualCheckAm ? item.visualCheckAm : '' ) + '\n' +

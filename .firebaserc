@@ -1,12 +1,21 @@
 {
   "projects": {
-    "pet-pals": "petpals-be1ba"
+    "pet-pals": "petpals-be1ba",
+    "petpals": "petpals-cb457",
+    "default": "petpals-cb457"
   },
   "targets": {
     "petpals-be1ba": {
       "hosting": {
         "pet-pals": [
           "petpals-be1ba"
+        ]
+      }
+    },
+    "petpals-cb457": {
+      "hosting": {
+        "petpals": [
+          "petpals-cb457"
         ]
       }
     }

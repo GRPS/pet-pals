@@ -9,7 +9,7 @@ export class ClipboardService {
     ) {
     }
 
-    add( data: string ): void {
+    add( data: string, message: string = 'The clipboard has been updated.' ): void {
         const selBox = document.createElement( 'textarea' );
         selBox.style.position = 'fixed';
         selBox.style.left = '0';
@@ -22,7 +22,7 @@ export class ClipboardService {
         document.execCommand( 'copy' );
         document.body.removeChild( selBox );
 
-        this._alertService.areYouSure( 'Clipboard Updated', 'The clipboard has been updated.<br><br>You can now \'paste\' the clipboard content where ever you wish. ', false, 'success', 'OK' );
+        this._alertService.areYouSure( 'Clipboard Updated', message + '<br><br>You can now \'paste\' the clipboard content where ever you wish.', false, 'success', 'OK' );
     }
 
 }
