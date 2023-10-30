@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    ver: 'LIVE 1.0.0',
+    ver: 'LIVE 1.0.1',
     loginWelcomeMessage: 'Welcome to Petpals Basingstoke website.',
     loginWelcomeMessagecolor: 'inherit',
     firebase: {

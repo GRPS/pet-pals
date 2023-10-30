@@ -4,7 +4,7 @@
 
 export const environment = {
     production: false,
-    ver: 'TESTING 1.0.0',
+    ver: 'TESTING 1.0.1',
     loginWelcomeMessage: 'Welcome to Petpals Basingstoke TESTING website.',
     loginWelcomeMessagecolor: 'red',
     firebase: {

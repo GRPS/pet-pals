@@ -136,18 +136,18 @@ export class VisitsListComponent implements OnInit, OnDestroy {
             let data: string = '';
             checkedItems.forEach( ( item: IVisit ) => data +=
                 'Date: ' + this._datepipe.transform( item.dt, 'EEEE, dd MMMM yyyy' ) + '\n' +
-                'Visitor AM: ' + ( item.visitorAm ? item.visitorAm : '' ) + '\n' +
                 'Visitor PM: ' + ( item.visitorPm ? item.visitorPm : '' ) + '\n' +
-                'Notes AM: ' + ( item.notesAm ? item.notesAm : '' ) + '\n' +
+                'Visitor AM: ' + ( item.visitorAm ? item.visitorAm : '' ) + '\n' +
                 'Notes PM: ' + ( item.notesPm ? item.notesPm : '' ) + '\n' +
-                'Visual Check AM: ' + ( item.visualCheckAm ? item.visualCheckAm : '' ) + '\n' +
+                'Notes AM: ' + ( item.notesAm ? item.notesAm : '' ) + '\n' +
                 'Visual Check PM: ' + ( item.visualCheckPm ? item.visualCheckPm : '' ) + '\n' +
-                'Food Intake AM: ' + ( item.foodIntakeAm ? item.foodIntakeAm : '' ) + '\n' +
+                'Visual Check AM: ' + ( item.visualCheckAm ? item.visualCheckAm : '' ) + '\n' +
                 'Food Intake PM: ' + ( item.foodIntakePm ? item.foodIntakePm : '' ) + '\n' +
-                'Medication AM: ' + ( item.medicationAm ? item.medicationAm : '' ) + '\n' +
+                'Food Intake AM: ' + ( item.foodIntakeAm ? item.foodIntakeAm : '' ) + '\n' +
                 'Medication PM: ' + ( item.medicationPm ? item.medicationPm : '' ) + '\n' +
-                'Security Check AM: ' + ( item.securityCheckAm ? item.securityCheckAm : '' ) + '\n' +
-                'Security Check PM: ' + ( item.securityCheckPm ? item.securityCheckPm : '' ) + '\n\n\n'
+                'Medication AM: ' + ( item.medicationAm ? item.medicationAm : '' ) + '\n' +
+                'Security Check PM: ' + ( item.securityCheckPm ? item.securityCheckPm : '' ) + '\n' +
+                'Security Check AM: ' + ( item.securityCheckAm ? item.securityCheckAm : '' ) + '\n\n\n'
             );
 
             this._clipboardService.add( data );
